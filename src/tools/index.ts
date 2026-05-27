@@ -7,7 +7,7 @@ import { rectTool } from './rectTool'
 import { circleTool } from './circleTool'
 import { edgeFinishTool } from './edgeFinishTool'
 import { componentTool } from './componentTool'
-import { bancadaLTool } from './bancadaLTool'
+import { lShapeTool } from './lShapeTool'
 import { penTool } from './penTool'
 import { textTool } from './textTool'
 
@@ -16,11 +16,11 @@ const handlers: Record<ToolId, ToolHandler> = {
   pan: panTool,
   line: lineTool,
   pen: penTool,
+  lshape: lShapeTool,
   rect: rectTool,
   circle: circleTool,
   shapes: edgeFinishTool,
   component: componentTool,
-  bancada_l: bancadaLTool,
   text: textTool,
   measure: lineTool,
 }

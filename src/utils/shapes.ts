@@ -17,7 +17,7 @@ import {
   DEFAULT_STROKE_WIDTH,
   DEFAULT_TEXT_FONT_SIZE,
 } from './constants'
-import { distanceMm, generateId } from './geometry'
+import { distanceCm, generateId } from './geometry'
 import { getComponentDefinition } from '../types/components'
 
 export function createLineShape(
@@ -26,6 +26,7 @@ export function createLineShape(
   x2: number,
   y2: number,
   points?: number[],
+  closed?: boolean,
 ): LineShape {
   return {
     id: generateId(),
@@ -36,10 +37,175 @@ export function createLineShape(
     x2,
     y2,
     points: points ?? [x1, y1, x2, y2],
+    closed,
     strokeWidth: DEFAULT_STROKE_WIDTH,
     stroke: DEFAULT_STROKE,
     metadata: { createdAt: new Date().toISOString() },
   }
+}
+
+export function createLShapePoints(
+  x: number,
+  y: number,
+  width1: number,
+  height1: number,
+  width2: number,
+  height2: number,
+  orientation: ComponentOrientation,
+): number[] {
+  const pointsByOrientation: Record<ComponentOrientation, number[]> = {
+    'top-left': [
+      x,
+      y,
+      x + width1,
+      y,
+      x + width1,
+      y + height2,
+      x + width2,
+      y + height2,
+      x + width2,
+      y + height1,
+      x,
+      y + height1,
+    ],
+    'top-right': [
+      x,
+      y,
+      x + width1,
+      y,
+      x + width1,
+      y + height1,
+      x + width1 - width2,
+      y + height1,
+      x + width1 - width2,
+      y + height2,
+      x,
+      y + height2,
+    ],
+    'bottom-left': [
+      x,
+      y,
+      x + width2,
+      y,
+      x + width2,
+      y + height1 - height2,
+      x + width1,
+      y + height1 - height2,
+      x + width1,
+      y + height1,
+      x,
+      y + height1,
+    ],
+    'bottom-right': [
+      x,
+      y,
+      x + width1,
+      y,
+      x + width1,
+      y + height1 - height2,
+      x + width1 - width2,
+      y + height1 - height2,
+      x + width1 - width2,
+      y + height1,
+      x,
+      y + height1,
+    ],
+  }
+
+  return pointsByOrientation[orientation]
+}
+
+export function createLShape(
+  x: number,
+  y: number,
+  width1: number,
+  height1: number,
+  width2: number,
+  height2: number,
+  orientation: ComponentOrientation,
+): LineShape {
+  const points = createLShapePoints(
+    x,
+    y,
+    width1,
+    height1,
+    width2,
+    height2,
+    orientation,
+  )
+  return {
+    ...createLineShape(x, y, x + width1, y + height1, points, true),
+    x,
+    y,
+    width: width1,
+    height: height1,
+    width1,
+    width2,
+    height1,
+    height2,
+    orientation,
+  }
+}
+
+export function normalizeShape(shape: Shape): Shape {
+  if (
+    shape.type === 'line' &&
+    shape.closed &&
+    typeof shape.x === 'number' &&
+    typeof shape.y === 'number' &&
+    typeof shape.width1 === 'number' &&
+    typeof shape.height1 === 'number' &&
+    typeof shape.width2 === 'number' &&
+    typeof shape.height2 === 'number' &&
+    shape.orientation
+  ) {
+    let x = shape.x
+    let y = shape.y
+    let width1 = shape.width1
+    let height1 = shape.height1
+    let width2 = shape.width2
+    let height2 = shape.height2
+
+    if (width1 < 0) {
+      x += width1
+      width1 = Math.abs(width1)
+    }
+    if (height1 < 0) {
+      y += height1
+      height1 = Math.abs(height1)
+    }
+
+    width2 = Math.max(5, Math.min(width2, width1 - 5))
+    height2 = Math.max(5, Math.min(height2, height1 - 5))
+
+    const points = createLShapePoints(
+      x,
+      y,
+      width1,
+      height1,
+      width2,
+      height2,
+      shape.orientation,
+    )
+    return {
+      ...shape,
+      x,
+      y,
+      width: width1,
+      height: height1,
+      width1,
+      width2,
+      height1,
+      height2,
+      points,
+      x1: x,
+      y1: y,
+      x2: x + width1,
+      y2: y + height1,
+    }
+  }
+
+  return shape
 }
 
 export function createRectShape(
@@ -156,7 +322,7 @@ export function createMeasurementForLine(line: LineShape): MeasurementShape {
   const y1 = points[1] ?? line.y1
   const x2 = points[points.length - 2] ?? line.x2
   const y2 = points[points.length - 1] ?? line.y2
-  const valueMm = distanceMm({ x: x1, y: y1 }, { x: x2, y: y2 })
+  const valueCm = distanceCm({ x: x1, y: y1 }, { x: x2, y: y2 })
   return {
     id: generateId(),
     type: 'measurement',
@@ -165,8 +331,8 @@ export function createMeasurementForLine(line: LineShape): MeasurementShape {
     y1,
     x2,
     y2,
-    valueMm,
-    label: `${Math.round(valueMm)} mm`,
+    valueMm: valueCm,
+    label: `${Math.round(valueCm)} cm`,
     sourceShapeId: line.id,
     metadata: {},
   }

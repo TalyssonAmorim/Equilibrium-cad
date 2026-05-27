@@ -33,7 +33,17 @@ export interface LineShape extends BaseShape {
   y1: number
   x2: number
   y2: number
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+  width1?: number
+  width2?: number
+  height1?: number
+  height2?: number
+  orientation?: ComponentOrientation
   points?: number[]
+  closed?: boolean
   strokeWidth: number
   stroke: string
 }

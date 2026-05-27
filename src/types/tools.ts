@@ -3,11 +3,11 @@ export type ToolId =
   | 'pan'
   | 'line'
   | 'pen'
+  | 'lshape'
   | 'rect'
   | 'circle'
   | 'shapes'
   | 'component'
-  | 'bancada_l'
   | 'text'
   | 'measure'
 
@@ -22,11 +22,11 @@ export const TOOLS: ToolDefinition[] = [
   { id: 'select', label: 'Seleção', icon: '◎', shortcut: 'V' },
   { id: 'line', label: 'Linha', icon: '╱', shortcut: 'L' },
   { id: 'pen', label: 'Caneta', icon: '✎', shortcut: 'P' },
+  { id: 'lshape', label: 'L reentrante', icon: '⌞', shortcut: 'Q' },
   { id: 'rect', label: 'Retângulo', icon: '▭', shortcut: 'R' },
   { id: 'circle', label: 'Círculo', icon: '○', shortcut: 'C' },
   { id: 'shapes', label: 'Shapes', icon: '⬡', shortcut: 'B' },
   { id: 'component', label: 'Componente', icon: '⧉', shortcut: 'K' },
-  { id: 'bancada_l', label: 'Bancada L', icon: '┐', shortcut: 'Q' },
   { id: 'text', label: 'Texto', icon: 'T', shortcut: 'T' },
   { id: 'measure', label: 'Medida', icon: '↔', shortcut: 'M' },
 ]

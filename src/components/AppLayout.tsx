@@ -40,7 +40,7 @@ export function AppLayout() {
 
         {/* Grid info badge */}
         <div className="pointer-events-none absolute bottom-3 left-3 rounded-lg border border-slate-300 bg-white/90 px-3 py-1.5 font-mono text-xs text-slate-600 shadow-sm">
-          mm · grid 10/100
+          cm · grid 1/10
         </div>
 
         {/* Toolbox flutuante (recolhível) */}

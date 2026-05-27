@@ -11,7 +11,7 @@ import { saveProject, loadProject, listProjects } from '../utils/db'
 import {
   exportProjectToTemplatePdf,
 } from '../utils/templateExport'
-import { createMeasurementForLine } from '../utils/shapes'
+import { createMeasurementForLine, normalizeShape } from '../utils/shapes'
 import { isLineShape } from '../types/shapes'
 
 const MAX_UNDO = 50
@@ -168,7 +168,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       project: {
         ...project,
         shapes: project.shapes.map((s) =>
-          s.id === id ? ({ ...s, ...patch } as Shape) : s,
+          s.id === id ? normalizeShape({ ...s, ...patch } as Shape) : s,
         ),
         updatedAt: new Date().toISOString(),
       },

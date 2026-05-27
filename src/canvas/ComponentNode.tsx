@@ -1,5 +1,5 @@
 import { Circle, Group, Line, Rect, Text } from 'react-konva'
-import type { ComponentOrientation, ComponentShape } from '../types/shapes'
+import type { ComponentShape } from '../types/shapes'
 import { SELECTION_COLOR } from '../utils/constants'
 import { getComponentDefinition } from '../types/components'
 
@@ -18,12 +18,6 @@ export function ComponentNode({ shape, selected }: ComponentNodeProps) {
   const innerPadding = 8
   const innerWidth = Math.max(10, shape.width - innerPadding * 2)
   const innerHeight = Math.max(10, shape.height - innerPadding * 2)
-  const thickness = Math.min(
-    Math.max(shape.params?.thickness ?? Math.min(shape.width, shape.height) * 0.25, 20),
-    Math.min(shape.width, shape.height) / 2,
-  )
-  const orientation: ComponentOrientation = shape.params?.orientation ?? 'top-left'
-
   const renderDetail = () => {
     const cx = innerPadding + innerWidth / 2
     const cy = innerPadding + innerHeight / 2
@@ -137,29 +131,6 @@ export function ComponentNode({ shape, selected }: ComponentNodeProps) {
             />
           </>
         )
-      case 'bancada_l':
-        return (
-          <>
-            <Rect
-              x={innerPadding + 4}
-              y={innerPadding + 4}
-              width={innerWidth * 0.55}
-              height={innerHeight - 8}
-              fill="rgba(255,255,255,0.55)"
-              stroke={stroke}
-              strokeWidth={0.5}
-            />
-            <Rect
-              x={innerPadding + innerWidth * 0.45}
-              y={innerPadding + innerHeight * 0.55}
-              width={innerWidth * 0.55}
-              height={innerHeight * 0.35}
-              fill="rgba(255,255,255,0.55)"
-              stroke={stroke}
-              strokeWidth={0.5}
-            />
-          </>
-        )
       case 'prateleira':
         return (
           <Rect
@@ -184,45 +155,24 @@ export function ComponentNode({ shape, selected }: ComponentNodeProps) {
         y={0}
         width={shape.width}
         height={shape.height}
-        fill={shape.componentType === 'bancada_l' ? 'transparent' : fill}
+        fill={fill}
         stroke={stroke}
         strokeWidth={shape.strokeWidth}
         perfectDrawEnabled={false}
       />
-      {shape.componentType === 'bancada_l' ? (
-        <>
-          <Rect
-            x={orientation.includes('left') ? 0 : shape.width - thickness}
-            y={0}
-            width={thickness}
-            height={shape.height}
-            fill={fill}
-            perfectDrawEnabled={false}
-          />
-          <Rect
-            x={0}
-            y={orientation.includes('top') ? 0 : shape.height - thickness}
-            width={shape.width}
-            height={thickness}
-            fill={fill}
-            perfectDrawEnabled={false}
-          />
-        </>
-      ) : (
-        <>
-          <Rect
-            x={innerPadding}
-            y={innerPadding}
-            width={innerWidth}
-            height={innerHeight}
-            stroke={stroke}
-            strokeWidth={0.5}
-            dash={[4, 4]}
-            perfectDrawEnabled={false}
-          />
-          {renderDetail()}
-        </>
-      )}
+      <>
+        <Rect
+          x={innerPadding}
+          y={innerPadding}
+          width={innerWidth}
+          height={innerHeight}
+          stroke={stroke}
+          strokeWidth={0.5}
+          dash={[4, 4]}
+          perfectDrawEnabled={false}
+        />
+        {renderDetail()}
+      </>
       <Text
         x={0}
         y={shape.height - fontSize - 6}

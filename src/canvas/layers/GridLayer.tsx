@@ -5,8 +5,8 @@ import { getVisibleWorldBounds } from '../../utils/camera'
 import {
   GRID_MAJOR_COLOR,
   GRID_MINOR_COLOR,
-  GRID_MAJOR_MM,
-  GRID_MINOR_MM,
+  GRID_MAJOR_CM,
+  GRID_MINOR_CM,
 } from '../../utils/constants'
 import { getGridLineRange, isMajorGridLine } from '../../utils/grid'
 import { WorldGroup } from '../WorldGroup'
@@ -17,14 +17,14 @@ function GridLayerInner() {
 
   const lines = useMemo(() => {
     const bounds = getVisibleWorldBounds(camera, viewport)
-    const padding = GRID_MAJOR_MM * 2
+    const padding = GRID_MAJOR_CM * 2
     const minX = bounds.minX - padding
     const maxX = bounds.maxX + padding
     const minY = bounds.minY - padding
     const maxY = bounds.maxY + padding
 
-    const verticals = getGridLineRange(minX, maxX, GRID_MINOR_MM)
-    const horizontals = getGridLineRange(minY, maxY, GRID_MINOR_MM)
+    const verticals = getGridLineRange(minX, maxX, GRID_MINOR_CM)
+    const horizontals = getGridLineRange(minY, maxY, GRID_MINOR_CM)
 
     const result: {
       key: string

@@ -2,10 +2,54 @@ import { useMemo, type ReactNode } from 'react'
 import { useCanvasStore } from '../store/canvasStore'
 import { useProjectStore } from '../store/projectStore'
 import { selectProjectShapes } from '../store/selectors'
-import { formatMm } from '../utils/geometry'
-import { isCircleShape, isEdgeFinishShape, isLineShape, isRectShape } from '../types/shapes'
+import { formatCm } from '../utils/geometry'
+import {
+  isCircleShape,
+  isEdgeFinishShape,
+  isLineShape,
+  isRectShape,
+  type ComponentOrientation,
+  type LineShape,
+  type Shape,
+} from '../types/shapes'
 import { getEdgeFinishDefinition } from '../types/edgeFinish'
 import { ProjectFieldsPanel } from './ProjectFieldsPanel'
+
+function isLShapeLine(shape: Shape): shape is LineShape & {
+  closed: true
+  width1: number
+  width2: number
+  height1: number
+  height2: number
+  orientation: ComponentOrientation
+  x: number
+  y: number
+} {
+  return (
+    isLineShape(shape) &&
+    shape.closed === true &&
+    typeof shape.width1 === 'number' &&
+    typeof shape.width2 === 'number' &&
+    typeof shape.height1 === 'number' &&
+    typeof shape.height2 === 'number' &&
+    typeof shape.orientation === 'string' &&
+    typeof shape.x === 'number' &&
+    typeof shape.y === 'number'
+  )
+}
+
+function flipOrientationX(orientation: ComponentOrientation): ComponentOrientation {
+  switch (orientation) {
+    case 'top-left':
+      return 'bottom-left'
+    case 'top-right':
+      return 'bottom-right'
+    case 'bottom-left':
+      return 'top-left'
+    case 'bottom-right':
+      return 'top-right'
+  }
+}
 
 export function PropertiesPanel() {
   const selectedIds = useCanvasStore((s) => s.selectedIds)
@@ -35,7 +79,7 @@ export function PropertiesPanel() {
         <section className="mb-4 rounded-lg bg-surface p-3">
           <p className="text-xs text-text-muted">Câmera</p>
           <p className="mt-1 font-mono text-xs text-text">
-            Centro: {formatMm(camera.x, 1)}, {formatMm(camera.y, 1)}
+            Centro: {formatCm(camera.x, 1)}, {formatCm(camera.y, 1)}
           </p>
           <p className="font-mono text-xs text-text">
             Zoom: {(camera.scale / 2.5 * 100).toFixed(0)}%
@@ -50,16 +94,87 @@ export function PropertiesPanel() {
           </p>
         )}
 
-        {shape && isLineShape(shape) && (
+        {shape && isLShapeLine(shape) && (
+          <ShapeEditor
+            title="Polígono em L"
+            onDelete={() => removeShapes([shape.id])}
+          >
+            <label className="block text-xs text-text-muted">
+              Largura do lado 1
+              <input
+                type="number"
+                className="mt-1 w-full min-h-11 rounded-lg border border-surface-border bg-surface px-3 text-sm"
+                value={shape.width1}
+                onChange={(e) =>
+                  updateShape(shape.id, {
+                    width1: Number(e.target.value),
+                  })
+                }
+              />
+            </label>
+            <label className="block text-xs text-text-muted">
+              Largura do lado 2
+              <input
+                type="number"
+                className="mt-1 w-full min-h-11 rounded-lg border border-surface-border bg-surface px-3 text-sm"
+                value={shape.width2}
+                onChange={(e) =>
+                  updateShape(shape.id, {
+                    width2: Number(e.target.value),
+                  })
+                }
+              />
+            </label>
+            <label className="block text-xs text-text-muted">
+              Altura do lado 1
+              <input
+                type="number"
+                className="mt-1 w-full min-h-11 rounded-lg border border-surface-border bg-surface px-3 text-sm"
+                value={shape.height1}
+                onChange={(e) =>
+                  updateShape(shape.id, {
+                    height1: Number(e.target.value),
+                  })
+                }
+              />
+            </label>
+            <label className="block text-xs text-text-muted">
+              Altura do lado 2
+              <input
+                type="number"
+                className="mt-1 w-full min-h-11 rounded-lg border border-surface-border bg-surface px-3 text-sm"
+                value={shape.height2}
+                onChange={(e) =>
+                  updateShape(shape.id, {
+                    height2: Number(e.target.value),
+                  })
+                }
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() =>
+                updateShape(shape.id, {
+                  orientation: flipOrientationX(shape.orientation),
+                })
+              }
+              className="mt-3 min-h-11 w-full rounded-lg border border-surface-border bg-surface px-3 text-sm transition hover:bg-surface-border"
+            >
+              Inverter no eixo X
+            </button>
+          </ShapeEditor>
+        )}
+
+        {shape && isLineShape(shape) && !isLShapeLine(shape) && (
           <ShapeEditor
             title="Linha"
             onDelete={() => removeShapes([shape.id])}
           >
-            <Field label="Comprimento" value={formatMm(
+            <Field label="Comprimento" value={formatCm(
               Math.hypot(shape.x2 - shape.x1, shape.y2 - shape.y1),
             )} />
-            <Field label="Início" value={`${shape.x1} mm, ${shape.y1} mm`} />
-            <Field label="Fim" value={`${shape.x2} mm, ${shape.y2} mm`} />
+            <Field label="Início" value={`${shape.x1} cm, ${shape.y1} cm`} />
+            <Field label="Fim" value={`${shape.x2} cm, ${shape.y2} cm`} />
             <label className="mt-2 block text-xs text-text-muted">
               Notas
               <textarea
@@ -81,12 +196,12 @@ export function PropertiesPanel() {
             title="Retângulo (bancada)"
             onDelete={() => removeShapes([shape.id])}
           >
-            <Field label="Posição" value={`${shape.x} mm, ${shape.y} mm`} />
-            <Field label="Largura" value={formatMm(shape.width)} />
-            <Field label="Profundidade" value={formatMm(shape.height)} />
+            <Field label="Posição" value={`${shape.x} cm, ${shape.y} cm`} />
+            <Field label="Largura" value={formatCm(shape.width)} />
+            <Field label="Profundidade" value={formatCm(shape.height)} />
             <Field
               label="Área"
-              value={formatMm(shape.width * shape.height)}
+              value={formatCm(shape.width * shape.height)}
             />
             <label className="mt-2 block text-xs text-text-muted">
               Material
@@ -113,11 +228,11 @@ export function PropertiesPanel() {
               label="Tipo"
               value={getEdgeFinishDefinition(shape.edgeType).label}
             />
-            <Field label="Largura" value={formatMm(shape.width)} />
-            <Field label="Altura" value={formatMm(shape.height)} />
+            <Field label="Largura" value={formatCm(shape.width)} />
+            <Field label="Altura" value={formatCm(shape.height)} />
             <Field
               label="Posição"
-              value={`${Math.round(shape.x)} mm, ${Math.round(shape.y)} mm`}
+              value={`${Math.round(shape.x)} cm, ${Math.round(shape.y)} cm`}
             />
           </ShapeEditor>
         )}
@@ -129,12 +244,12 @@ export function PropertiesPanel() {
           >
             <Field
               label="Centro"
-              value={`${shape.cx} mm, ${shape.cy} mm`}
+              value={`${shape.cx} cm, ${shape.cy} cm`}
             />
-            <Field label="Raio" value={formatMm(shape.radius)} />
+            <Field label="Raio" value={formatCm(shape.radius)} />
             <Field
               label="Diâmetro"
-              value={formatMm(shape.radius * 2)}
+              value={formatCm(shape.radius * 2)}
             />
             <p className="text-xs text-text-muted">
               Arraste os pontos amarelos no canvas para redimensionar.

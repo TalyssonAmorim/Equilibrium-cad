@@ -1,8 +1,8 @@
 import { useCanvasStore } from '../store/canvasStore'
 import { useProjectStore } from '../store/projectStore'
 import {
-  DEFAULT_EDGE_FINISH_HEIGHT_MM,
-  DEFAULT_EDGE_FINISH_WIDTH_MM,
+  DEFAULT_EDGE_FINISH_HEIGHT_CM,
+  DEFAULT_EDGE_FINISH_WIDTH_CM,
 } from '../utils/constants'
 import { snapPoint } from '../utils/grid'
 import { createEdgeFinishShape } from '../utils/shapes'
@@ -48,14 +48,14 @@ export const edgeFinishTool: ToolHandler = {
     let width = Math.abs(end.x - draft.startX)
     let height = Math.abs(end.y - draft.startY)
 
-    if (width < 8 && height < 8) {
-      width = DEFAULT_EDGE_FINISH_WIDTH_MM
-      height = DEFAULT_EDGE_FINISH_HEIGHT_MM
+    if (width < 0.8 && height < 0.8) {
+      width = DEFAULT_EDGE_FINISH_WIDTH_CM
+      height = DEFAULT_EDGE_FINISH_HEIGHT_CM
       x = draft.startX - width / 2
       y = draft.startY - height / 2
     }
 
-    if (width < 5 || height < 5) return
+    if (width < 0.5 || height < 0.5) return
 
     useProjectStore
       .getState()

@@ -13,7 +13,6 @@ export type ComponentType =
   | 'fogao_2q'
   | 'fogao_4q'
   | 'caixa_seca'
-  | 'bancada_l'
   | 'prateleira'
 
 export interface ComponentDefinition {
@@ -161,19 +160,6 @@ export const COMPONENT_LIBRARY: ComponentDefinition[] = [
       <line x1="200" y1="30" x2="200" y2="80" stroke="#999" stroke-width="1"/>
       <line x1="400" y1="30" x2="400" y2="80" stroke="#999" stroke-width="1"/>
       <line x1="600" y1="30" x2="600" y2="80" stroke="#999" stroke-width="1"/>
-    `,
-  },
-  {
-    id: 'bancada_l',
-    label: 'Bancada em L',
-    shortLabel: 'Bancada L',
-    width: 800,
-    height: 600,
-    fillColor: 'rgba(100, 100, 100, 0.1)',
-    strokeColor: '#333',
-    icon: `
-      <rect x="40" y="40" width="300" height="500" fill="rgba(100, 100, 100, 0.2)" stroke="#333" stroke-width="2"/>
-      <rect x="340" y="400" width="460" height="140" fill="rgba(100, 100, 100, 0.2)" stroke="#333" stroke-width="2"/>
     `,
   },
   {

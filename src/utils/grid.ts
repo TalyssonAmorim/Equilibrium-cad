@@ -1,17 +1,17 @@
-import { GRID_MAJOR_MM, GRID_MINOR_MM } from './constants'
+import { GRID_MAJOR_CM, GRID_MINOR_CM } from './constants'
 
-export function snapToGrid(valueMm: number, gridMm = GRID_MINOR_MM): number {
-  return Math.round(valueMm / gridMm) * gridMm
+export function snapToGrid(valueCm: number, gridCm = GRID_MINOR_CM): number {
+  return Math.round(valueCm / gridCm) * gridCm
 }
 
 export function snapPoint(
   x: number,
   y: number,
-  gridMm = GRID_MINOR_MM,
+  gridCm = GRID_MINOR_CM,
 ): { x: number; y: number } {
   return {
-    x: snapToGrid(x, gridMm),
-    y: snapToGrid(y, gridMm),
+    x: snapToGrid(x, gridCm),
+    y: snapToGrid(y, gridCm),
   }
 }
 
@@ -29,7 +29,7 @@ export function getGridLineRange(
 }
 
 export function isMajorGridLine(value: number): boolean {
-  return value % GRID_MAJOR_MM === 0
+  return value % GRID_MAJOR_CM === 0
 }
 
-export { GRID_MINOR_MM, GRID_MAJOR_MM }
+export { GRID_MINOR_CM, GRID_MAJOR_CM }

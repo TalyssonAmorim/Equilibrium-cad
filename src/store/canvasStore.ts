@@ -39,6 +39,18 @@ export type DraftState =
       currentY: number
     }
   | {
+      kind: 'lshape'
+      startX: number
+      startY: number
+      currentX: number
+      currentY: number
+    }
+  | {
+      kind: 'text'
+      x: number
+      y: number
+    }
+  | {
       kind: 'pen'
       points: number[]
     }

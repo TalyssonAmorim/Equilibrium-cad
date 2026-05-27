@@ -13,7 +13,7 @@ const DRAWING_TOOLS = new Set([
   'text',
   'pen',
   'component',
-  'bancada_l',
+  'lshape',
 ])
 
 interface PointerState {

@@ -11,7 +11,7 @@ import {
 import type { ToolHandler } from './types'
 import type { Shape } from '../types/shapes'
 
-const HANDLE_HIT_MM = 14
+const HANDLE_HIT_CM = 1.4
 
 let resizeSession: {
   shapeId: string
@@ -19,15 +19,31 @@ let resizeSession: {
   initialShape: Shape
 } | null = null
 
+let moveSession: {
+  shapeId: string
+  initialShape: Shape
+  startX: number
+  startY: number
+} | null = null
+
 function snapWorld(x: number, y: number) {
   const { snapEnabled } = useCanvasStore.getState()
   return snapEnabled ? snapPoint(x, y) : { x, y }
 }
 
+function canMove(shape: Shape): boolean {
+  return (
+    shape.type === 'text' ||
+    shape.type === 'rect' ||
+    shape.type === 'edgeFinish' ||
+    shape.type === 'component'
+  )
+}
+
 function hitTestShape(
   worldX: number,
   worldY: number,
-  toleranceMm: number,
+  toleranceCm: number,
 ): string | null {
   const shapes = useProjectStore.getState().project?.shapes ?? EMPTY_SHAPES
   const drawing = shapes.filter((s) => s.layer === 'drawing')
@@ -35,16 +51,16 @@ function hitTestShape(
     const shape = drawing[i]
     if (shape.type === 'circle') {
       const d = Math.hypot(worldX - shape.cx, worldY - shape.cy)
-      if (d <= shape.radius + toleranceMm) return shape.id
+      if (d <= shape.radius + toleranceCm) return shape.id
       continue
     }
     const bounds = getShapeBounds(shape)
     if (!bounds) continue
     if (
-      worldX >= bounds.minX - toleranceMm &&
-      worldX <= bounds.maxX + toleranceMm &&
-      worldY >= bounds.minY - toleranceMm &&
-      worldY <= bounds.maxY + toleranceMm
+      worldX >= bounds.minX - toleranceCm &&
+      worldX <= bounds.maxX + toleranceCm &&
+      worldY >= bounds.minY - toleranceCm &&
+      worldY <= bounds.maxY + toleranceCm
     ) {
       return shape.id
     }
@@ -67,7 +83,7 @@ export const selectTool: ToolHandler = {
         ctx.world.x,
         ctx.world.y,
         selected,
-        HANDLE_HIT_MM,
+        HANDLE_HIT_CM,
       )
       if (handle) {
         useProjectStore.getState().captureUndoSnapshot()
@@ -81,7 +97,25 @@ export const selectTool: ToolHandler = {
     }
 
     resizeSession = null
-    const hit = hitTestShape(ctx.world.x, ctx.world.y, 8)
+    moveSession = null
+
+    // Se clicou em uma forma já selecionada, inicia movimento
+    if (selected && canMove(selected)) {
+      const bounds = getShapeBounds(selected)
+      if (bounds && ctx.world.x >= bounds.minX && ctx.world.x <= bounds.maxX &&
+          ctx.world.y >= bounds.minY && ctx.world.y <= bounds.maxY) {
+        useProjectStore.getState().captureUndoSnapshot()
+        moveSession = {
+          shapeId: selected.id,
+          initialShape: structuredClone(selected),
+          startX: ctx.world.x,
+          startY: ctx.world.y,
+        }
+        return
+      }
+    }
+
+    const hit = hitTestShape(ctx.world.x, ctx.world.y, 0.8)
     if (hit) {
       useCanvasStore.getState().setSelectedIds([hit])
     } else {
@@ -90,22 +124,37 @@ export const selectTool: ToolHandler = {
   },
 
   onPointerMove(ctx) {
-    if (!resizeSession) return
-    const p = snapWorld(ctx.world.x, ctx.world.y)
-    const patch = applyResize(
-      resizeSession.initialShape,
-      resizeSession.handle,
-      p.x,
-      p.y,
-    )
-    if (!patch) return
-    useProjectStore.getState().updateShape(resizeSession.shapeId, patch, {
-      recordUndo: false,
-    })
+    if (resizeSession) {
+      const p = snapWorld(ctx.world.x, ctx.world.y)
+      const patch = applyResize(
+        resizeSession.initialShape,
+        resizeSession.handle,
+        p.x,
+        p.y,
+      )
+      if (!patch) return
+      useProjectStore.getState().updateShape(resizeSession.shapeId, patch, {
+        recordUndo: false,
+      })
+    } else if (moveSession) {
+      const initialShape = moveSession.initialShape as any
+      const dx = ctx.world.x - moveSession.startX
+      const dy = ctx.world.y - moveSession.startY
+      const p = snapWorld(initialShape.x + dx, initialShape.y + dy)
+      
+      const patch: Partial<Shape> = {
+        x: p.x,
+        y: p.y,
+      }
+      useProjectStore.getState().updateShape(moveSession.shapeId, patch, {
+        recordUndo: false,
+      })
+    }
   },
 
   onPointerUp() {
     resizeSession = null
+    moveSession = null
   },
 
   onCancel() {
@@ -118,6 +167,16 @@ export const selectTool: ToolHandler = {
           { recordUndo: false },
         )
     }
+    if (moveSession) {
+      useProjectStore
+        .getState()
+        .updateShape(
+          moveSession.shapeId,
+          moveSession.initialShape as Partial<Shape>,
+          { recordUndo: false },
+        )
+    }
     resizeSession = null
+    moveSession = null
   },
 }

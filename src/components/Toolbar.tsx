@@ -65,7 +65,7 @@ export function Toolbar({ onNewProject, onOpenProjects }: ToolbarProps) {
           onChange={(e) => setSnapEnabled(e.target.checked)}
           className="h-5 w-5 accent-accent"
         />
-        Snap 10mm
+        Snap 1cm
       </label>
 
       <button

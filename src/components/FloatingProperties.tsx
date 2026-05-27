@@ -15,6 +15,16 @@ export function FloatingProperties() {
   )
 
   const shape = selected.length === 1 ? selected[0] : null
+  const lShape =
+    shape &&
+    shape.type === 'line' &&
+    shape.closed &&
+    typeof shape.width1 === 'number' &&
+    typeof shape.width2 === 'number' &&
+    typeof shape.height1 === 'number' &&
+    typeof shape.height2 === 'number'
+      ? shape
+      : null
   const dimensionShape =
     shape && 'width' in shape && 'height' in shape ? shape : null
   const width = dimensionShape?.width
@@ -50,7 +60,73 @@ export function FloatingProperties() {
           </p>
         )}
 
-        {shape && dimensionShape && (
+        {shape && lShape && (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="block text-xs text-text-muted">
+              Largura do lado 1
+              <input
+                type="number"
+                value={lShape.width1}
+                className="mt-1 w-full min-h-11 rounded-lg border border-surface-border bg-surface px-3 py-2 text-sm text-text"
+                onChange={(e) =>
+                  updateShape(shape.id, { width1: Number(e.target.value) })
+                }
+              />
+            </label>
+
+            <label className="block text-xs text-text-muted">
+              Largura do lado 2
+              <input
+                type="number"
+                value={lShape.width2}
+                className="mt-1 w-full min-h-11 rounded-lg border border-surface-border bg-surface px-3 py-2 text-sm text-text"
+                onChange={(e) =>
+                  updateShape(shape.id, { width2: Number(e.target.value) })
+                }
+              />
+            </label>
+
+            <label className="block text-xs text-text-muted">
+              Altura do lado 1
+              <input
+                type="number"
+                value={lShape.height1}
+                className="mt-1 w-full min-h-11 rounded-lg border border-surface-border bg-surface px-3 py-2 text-sm text-text"
+                onChange={(e) =>
+                  updateShape(shape.id, { height1: Number(e.target.value) })
+                }
+              />
+            </label>
+
+            <label className="block text-xs text-text-muted">
+              Altura do lado 2
+              <input
+                type="number"
+                value={lShape.height2}
+                className="mt-1 w-full min-h-11 rounded-lg border border-surface-border bg-surface px-3 py-2 text-sm text-text"
+                onChange={(e) =>
+                  updateShape(shape.id, { height2: Number(e.target.value) })
+                }
+              />
+            </label>
+
+            <label className="block text-xs text-text-muted sm:col-span-2">
+              Material
+              <input
+                className="mt-1 w-full min-h-11 rounded-lg border border-surface-border bg-surface px-3 py-2 text-sm text-text"
+                value={material}
+                placeholder="Ex: Granito Preto"
+                onChange={(e) =>
+                  updateShape(shape.id, {
+                    metadata: { ...shape.metadata, material: e.target.value },
+                  })
+                }
+              />
+            </label>
+          </div>
+        )}
+
+        {shape && !lShape && dimensionShape && (
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-xs text-text-muted">
               Altura
@@ -92,7 +168,7 @@ export function FloatingProperties() {
           </div>
         )}
 
-        {shape && !dimensionShape && (
+        {shape && !dimensionShape && !lShape && (
           <p className="text-sm text-text-muted">
             Este objeto não possui campos editáveis de altura, largura e material.
           </p>

@@ -5,7 +5,7 @@ import type { Shape } from '../types/shapes'
 import { getShapeBounds } from './shapes'
 
 const EXPORT_PX = 720
-const PADDING_MM = 20
+const PADDING_CM = 2
 
 function addShapeToGroup(group: Konva.Group, shape: Shape) {
   switch (shape.type) {
@@ -13,6 +13,7 @@ function addShapeToGroup(group: Konva.Group, shape: Shape) {
       group.add(
         new Konva.Line({
           points: shape.points ?? [shape.x1, shape.y1, shape.x2, shape.y2],
+          closed: shape.closed,
           stroke: shape.stroke,
           strokeWidth: shape.strokeWidth,
           lineCap: 'round',
@@ -96,8 +97,8 @@ export function renderDrawingToDataUrl(shapes: Shape[]): string | null {
   }
   if (!Number.isFinite(minX)) return null
 
-  const contentW = maxX - minX + PADDING_MM * 2
-  const contentH = maxY - minY + PADDING_MM * 2
+  const contentW = maxX - minX + PADDING_CM * 2
+  const contentH = maxY - minY + PADDING_CM * 2
   const scale = Math.min(EXPORT_PX / contentW, EXPORT_PX / contentH)
   const offsetX = (EXPORT_PX - (maxX - minX) * scale) / 2 - minX * scale
   const offsetY = (EXPORT_PX - (maxY - minY) * scale) / 2 - minY * scale

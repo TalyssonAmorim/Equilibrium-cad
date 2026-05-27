@@ -1,4 +1,4 @@
-import type { Shape } from '../types/shapes'
+import type { LineShape, ComponentOrientation, Shape } from '../types/shapes'
 import { getShapeBounds } from './shapes'
 
 export type BoxHandle =
@@ -22,10 +22,52 @@ export interface HandlePosition {
   y: number
 }
 
-const MIN_SIZE_MM = 5
-const MIN_RADIUS_MM = 5
+const MIN_SIZE_CM = 0.5
+const MIN_RADIUS_CM = 0.5
+
+function isLShape(shape: Shape): shape is LineShape & {
+  x: number
+  y: number
+  width1: number
+  height1: number
+  width2: number
+  height2: number
+  orientation: ComponentOrientation
+  closed: true
+} {
+  return (
+    shape.type === 'line' &&
+    shape.closed === true &&
+    typeof shape.x === 'number' &&
+    typeof shape.y === 'number' &&
+    typeof shape.width1 === 'number' &&
+    typeof shape.height1 === 'number' &&
+    typeof shape.width2 === 'number' &&
+    typeof shape.height2 === 'number' &&
+    typeof shape.orientation === 'string'
+  )
+}
 
 export function getResizeHandles(shape: Shape): HandlePosition[] {
+  if (isLShape(shape)) {
+    const bounds = getShapeBounds(shape)
+    if (!bounds) return []
+    const { minX, minY, maxX, maxY } = bounds
+    const mx = (minX + maxX) / 2
+    const my = (minY + maxY) / 2
+
+    return [
+      { id: 'nw', x: minX, y: minY },
+      { id: 'n', x: mx, y: minY },
+      { id: 'ne', x: maxX, y: minY },
+      { id: 'e', x: maxX, y: my },
+      { id: 'se', x: maxX, y: maxY },
+      { id: 's', x: mx, y: maxY },
+      { id: 'sw', x: minX, y: maxY },
+      { id: 'w', x: minX, y: my },
+    ]
+  }
+
   if (shape.type === 'line') {
     return [
       { id: 'line-start', x: shape.x1, y: shape.y1 },
@@ -68,16 +110,16 @@ export function hitTestResizeHandle(
   worldX: number,
   worldY: number,
   shape: Shape,
-  toleranceMm: number,
+  toleranceCm: number,
 ): ResizeHandle | null {
   for (const h of getResizeHandles(shape)) {
-    if (Math.hypot(worldX - h.x, worldY - h.y) <= toleranceMm) {
+    if (Math.hypot(worldX - h.x, worldY - h.y) <= toleranceCm) {
       return h.id
     }
   }
 
   const rotateHandle = getRotateHandle(shape)
-  if (rotateHandle && Math.hypot(worldX - rotateHandle.x, worldY - rotateHandle.y) <= toleranceMm) {
+  if (rotateHandle && Math.hypot(worldX - rotateHandle.x, worldY - rotateHandle.y) <= toleranceCm) {
     return rotateHandle.id
   }
 
@@ -102,6 +144,9 @@ export function applyResize(
     case 'circle':
       return resizeCircle(initial, handle as BoxHandle, worldX, worldY)
     case 'line':
+      if (isLShape(initial)) {
+        return resizeLShape(initial, handle as BoxHandle, worldX, worldY)
+      }
       return resizeLine(initial, handle as LineHandle, worldX, worldY)
     default:
       return null
@@ -179,8 +224,8 @@ function resizeRect(
     height = -height
   }
 
-  width = Math.max(MIN_SIZE_MM, width)
-  height = Math.max(MIN_SIZE_MM, height)
+  width = Math.max(MIN_SIZE_CM, width)
+  height = Math.max(MIN_SIZE_CM, height)
 
   return { x, y, width, height }
 }
@@ -200,7 +245,41 @@ function resizeCircle(
   } else {
     radius = Math.hypot(wx - cx, wy - cy)
   }
-  return { radius: Math.max(MIN_RADIUS_MM, radius) }
+  return { radius: Math.max(MIN_RADIUS_CM, radius) }
+}
+
+function resizeLShape(
+  shape: Extract<Shape, { type: 'line' }> & {
+    x: number
+    y: number
+    width1: number
+    height1: number
+    width2: number
+    height2: number
+    orientation: ComponentOrientation
+    closed: true
+  },
+  handle: BoxHandle,
+  wx: number,
+  wy: number,
+): Partial<Shape> {
+  const rectPatch = resizeRect(
+    {
+      x: shape.x,
+      y: shape.y,
+      width: shape.width1,
+      height: shape.height1,
+    },
+    handle,
+    wx,
+    wy,
+  )
+
+  return {
+    ...rectPatch,
+    width1: rectPatch.width,
+    height1: rectPatch.height,
+  }
 }
 
 function resizeLine(

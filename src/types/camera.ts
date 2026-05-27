@@ -1,8 +1,8 @@
 export interface Camera {
-  /** Centro da viewport em coordenadas mundo (mm) */
+  /** Centro da viewport em coordenadas mundo (cm) */
   x: number
   y: number
-  /** Escala: pixels por milímetro */
+  /** Escala: pixels por centímetro */
   scale: number
 }
 

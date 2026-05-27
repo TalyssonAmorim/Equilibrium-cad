@@ -9,10 +9,10 @@ import { selectProjectShapes } from '../../store/selectors'
 import { getShapeBounds } from '../../utils/shapes'
 import { DEFAULT_STROKE_WIDTH, SELECTION_COLOR } from '../../utils/constants'
 import { WorldGroup } from '../WorldGroup'
-import { formatMm } from '../../utils/geometry'
+import { formatCm } from '../../utils/geometry'
 import { getResizeHandles, getRotateHandle } from '../../utils/transform'
 
-const HANDLE_RADIUS_MM = 5
+const HANDLE_RADIUS_CM = 0.5
 
 function DraftPreview() {
   const draft = useCanvasStore((s) => s.draft)
@@ -35,8 +35,8 @@ function DraftPreview() {
         />
         <Text
           x={(draft.startX + draft.currentX) / 2}
-          y={(draft.startY + draft.currentY) / 2 - 12}
-          text={formatMm(len)}
+          y={(draft.startY + draft.currentY) / 2 - 16}
+          text={formatCm(len)}
           fontSize={11}
           fill="#64748b"
           listening={false}
@@ -55,6 +55,93 @@ function DraftPreview() {
         opacity={0.9}
         lineCap="round"
         lineJoin="round"
+        listening={false}
+      />
+    )
+  }
+
+  if (draft.kind === 'lshape') {
+    const width = Math.abs(draft.currentX - draft.startX)
+    const height = Math.abs(draft.currentY - draft.startY)
+    const thickness = Math.min(width, height) * 0.35
+    const orientation = (() => {
+      const dx = draft.currentX - draft.startX
+      const dy = draft.currentY - draft.startY
+      if (dx >= 0 && dy >= 0) return 'top-left'
+      if (dx < 0 && dy >= 0) return 'top-right'
+      if (dx >= 0 && dy < 0) return 'bottom-left'
+      return 'bottom-right'
+    })()
+
+    const x = Math.min(draft.startX, draft.currentX)
+    const y = Math.min(draft.startY, draft.currentY)
+    const pointsByOrientation: Record<string, number[]> = {
+      'top-left': [
+        x,
+        y,
+        x + width,
+        y,
+        x + width,
+        y + thickness,
+        x + thickness,
+        y + thickness,
+        x + thickness,
+        y + height,
+        x,
+        y + height,
+      ],
+      'top-right': [
+        x,
+        y,
+        x + width,
+        y,
+        x + width,
+        y + height,
+        x + width - thickness,
+        y + height,
+        x + width - thickness,
+        y + thickness,
+        x,
+        y + thickness,
+      ],
+      'bottom-left': [
+        x,
+        y,
+        x + thickness,
+        y,
+        x + thickness,
+        y + height - thickness,
+        x + width,
+        y + height - thickness,
+        x + width,
+        y + height,
+        x,
+        y + height,
+      ],
+      'bottom-right': [
+        x,
+        y,
+        x + width,
+        y,
+        x + width,
+        y + height,
+        x + width - thickness,
+        y + height,
+        x + width - thickness,
+        y + thickness,
+        x,
+        y + thickness,
+      ],
+    }
+
+    return (
+      <Line
+        points={pointsByOrientation[orientation]}
+        closed
+        stroke="#475569"
+        strokeWidth={DEFAULT_STROKE_WIDTH}
+        dash={[6, 4]}
+        opacity={0.9}
         listening={false}
       />
     )
@@ -87,7 +174,7 @@ function DraftPreview() {
         <Text
           x={draft.centerX + radius / 2}
           y={draft.centerY - 14}
-          text={`R ${formatMm(radius)}`}
+          text={`R ${formatCm(radius)}`}
           fontSize={11}
           fill="#64748b"
           listening={false}
@@ -148,7 +235,7 @@ function DraftPreview() {
         <Text
           x={x + w / 2}
           y={y + h / 2}
-          text={`${formatMm(w)} × ${formatMm(h)}`}
+          text={`${formatCm(w)} × ${formatCm(h)}`}
           fontSize={11}
           fill="#64748b"
           offsetX={40}
@@ -188,7 +275,7 @@ function DraftPreview() {
         <Text
           x={w / 2}
           y={h / 2 + 10}
-          text={`${formatMm(w)} × ${formatMm(h)}`}
+          text={`${formatCm(w)} × ${formatCm(h)}`}
           fontSize={10}
           fill="#64748b"
           align="center"
@@ -234,7 +321,7 @@ function SelectionOverlay() {
           key={h.id}
           x={h.x}
           y={h.y}
-          radius={HANDLE_RADIUS_MM}
+          radius={HANDLE_RADIUS_CM}
           fill="#0f172a"
           stroke={SELECTION_COLOR}
           strokeWidth={0.6}
@@ -249,7 +336,7 @@ function SelectionOverlay() {
             key={rotateHandle.id}
             x={rotateHandle.x}
             y={rotateHandle.y}
-            radius={HANDLE_RADIUS_MM + 1}
+            radius={HANDLE_RADIUS_CM + 0.1}
             fill="#f8fafc"
             stroke={SELECTION_COLOR}
             strokeWidth={0.8}
