@@ -2,7 +2,7 @@ import { useCanvasStore } from '../store/canvasStore'
 import { useProjectStore } from '../store/projectStore'
 import { TOOLS } from '../types/tools'
 
-const TOP_TOOL_IDS = ['line', 'pen', 'rect', 'circle']
+const TOP_TOOL_IDS = ['line', 'pen', 'lshape', 'rect', 'circle']
 
 export function FloatingToolbar() {
   const undo = useProjectStore((s) => s.undo)

@@ -54,6 +54,13 @@ export type DraftState =
       kind: 'pen'
       points: number[]
     }
+  | {
+      kind: 'roda-banca'
+      startX: number
+      startY: number
+      currentX: number
+      currentY: number
+    }
 
 interface CanvasState {
   camera: Camera
@@ -62,6 +69,7 @@ interface CanvasState {
   selectedIds: string[]
   snapEnabled: boolean
   draft: DraftState | null
+  rodaBancaHeightCm: number
   selectedEdgeFinish: EdgeFinishType
   selectedComponent: ComponentType | null
   shapesPanelOpen: boolean
@@ -81,6 +89,7 @@ interface CanvasState {
   toggleSelection: (id: string) => void
   clearSelection: () => void
   setSnapEnabled: (enabled: boolean) => void
+  setRodaBancaHeight: (height: number) => void
   setDraft: (draft: DraftState | null) => void
   setSelectedEdgeFinish: (type: EdgeFinishType) => void
   setSelectedComponent: (type: ComponentType | null) => void
@@ -100,6 +109,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   selectedIds: [],
   snapEnabled: true,
   draft: null,
+  rodaBancaHeightCm: 10,
   selectedEdgeFinish: 'reto',
   selectedComponent: null,
   shapesPanelOpen: false,
@@ -164,6 +174,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   },
   clearSelection: () => set({ selectedIds: [] }),
   setSnapEnabled: (snapEnabled) => set({ snapEnabled }),
+  setRodaBancaHeight: (rodaBancaHeightCm) => set({ rodaBancaHeightCm }),
   setDraft: (draft) => set({ draft }),
   setSelectedEdgeFinish: (selectedEdgeFinish) => set({ selectedEdgeFinish }),
   setSelectedComponent: (selectedComponent) => set({ selectedComponent }),

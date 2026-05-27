@@ -9,6 +9,8 @@ import { edgeFinishTool } from './edgeFinishTool'
 import { componentTool } from './componentTool'
 import { lShapeTool } from './lShapeTool'
 import { penTool } from './penTool'
+import { rodaBancaTool } from './rodaBancaTool'
+import { eraserTool } from './eraserTool'
 import { textTool } from './textTool'
 
 const handlers: Record<ToolId, ToolHandler> = {
@@ -16,11 +18,13 @@ const handlers: Record<ToolId, ToolHandler> = {
   pan: panTool,
   line: lineTool,
   pen: penTool,
+  'roda-banca': rodaBancaTool,
   lshape: lShapeTool,
   rect: rectTool,
   circle: circleTool,
   shapes: edgeFinishTool,
   component: componentTool,
+  eraser: eraserTool,
   text: textTool,
   measure: lineTool,
 }

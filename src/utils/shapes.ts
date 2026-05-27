@@ -44,6 +44,64 @@ export function createLineShape(
   }
 }
 
+export function createRodaBancaPoints(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  height: number,
+): number[] {
+  const dx = x2 - x1
+  const dy = y2 - y1
+  const length = Math.hypot(dx, dy) || 1
+  const nx = dx / length
+  const ny = dy / length
+  const perpX = -ny
+  const perpY = nx
+  const halfHeight = height / 2
+
+  const backLeftX = x1 + perpX * halfHeight
+  const backLeftY = y1 + perpY * halfHeight
+  const backRightX = x1 - perpX * halfHeight
+  const backRightY = y1 - perpY * halfHeight
+
+  const tipCenterX = x2 - nx * halfHeight
+  const tipCenterY = y2 - ny * halfHeight
+  const tipLeftX = tipCenterX + perpX * halfHeight
+  const tipLeftY = tipCenterY + perpY * halfHeight
+  const tipRightX = tipCenterX - perpX * halfHeight
+  const tipRightY = tipCenterY - perpY * halfHeight
+
+  return [
+    backLeftX,
+    backLeftY,
+    backRightX,
+    backRightY,
+    tipRightX,
+    tipRightY,
+    x2,
+    y2,
+    tipLeftX,
+    tipLeftY,
+  ]
+}
+
+export function createRodaBancaShape(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  height: number,
+): LineShape {
+  const points = createRodaBancaPoints(x1, y1, x2, y2, height)
+  return {
+    ...createLineShape(x1, y1, x2, y2, points, true),
+    width: Math.hypot(x2 - x1, y2 - y1),
+    height,
+    metadata: { createdAt: new Date().toISOString() },
+  }
+}
+
 export function createLShapePoints(
   x: number,
   y: number,

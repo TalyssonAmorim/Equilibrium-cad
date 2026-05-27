@@ -12,6 +12,8 @@ const DRAWING_TOOLS = new Set([
   'measure',
   'text',
   'pen',
+  'roda-banca',
+  'eraser',
   'component',
   'lshape',
 ])

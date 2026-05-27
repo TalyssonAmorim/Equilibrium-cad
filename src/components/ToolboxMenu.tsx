@@ -1,13 +1,16 @@
+import { useRef } from 'react'
 import { useCanvasStore } from '../store/canvasStore'
 import { useProjectStore } from '../store/projectStore'
 import { TOOLS } from '../types/tools'
 import type { ToolId } from '../types/tools'
 
-const TOP_TOOL_IDS = ['line', 'pen', 'rect', 'circle']
+const TOP_TOOL_IDS = ['line', 'pen', 'lshape', 'rect', 'circle']
 
 export function ToolboxMenu() {
   const activeTool = useCanvasStore((s) => s.activeTool)
   const setActiveTool = useCanvasStore((s) => s.setActiveTool)
+  const rodaBancaHeightCm = useCanvasStore((s) => s.rodaBancaHeightCm)
+  const setRodaBancaHeight = useCanvasStore((s) => s.setRodaBancaHeight)
   const toolboxOpen = useCanvasStore((s) => s.toolboxOpen)
   const setToolboxOpen = useCanvasStore((s) => s.setToolboxOpen)
   const undo = useProjectStore((s) => s.undo)
@@ -16,7 +19,20 @@ export function ToolboxMenu() {
   const visibleTools = TOOLS.filter(
     (tool) => !TOP_TOOL_IDS.includes(tool.id),
   )
+  const longPressTimer = useRef<number | null>(null)
 
+  const handleLongPress = (toolId: string) => {
+    if (toolId !== 'roda-banca') return
+    const value = prompt(
+      'Altura da roda-banca em cm',
+      rodaBancaHeightCm.toString(),
+    )
+    if (!value) return
+    const parsed = Number(value)
+    if (!Number.isNaN(parsed) && parsed > 0) {
+      setRodaBancaHeight(parsed)
+    }
+  }
   return (
     <>
       {/* Botão flutuante quando fechado */}
@@ -40,6 +56,26 @@ export function ToolboxMenu() {
                 key={tool.id}
                 type="button"
                 title={`${tool.label}${tool.shortcut ? ` (${tool.shortcut})` : ''}`}
+                onPointerDown={() => {
+                  if (tool.id === 'roda-banca') {
+                    longPressTimer.current = window.setTimeout(
+                      () => handleLongPress(tool.id),
+                      500,
+                    )
+                  }
+                }}
+                onPointerUp={() => {
+                  if (longPressTimer.current !== null) {
+                    window.clearTimeout(longPressTimer.current)
+                    longPressTimer.current = null
+                  }
+                }}
+                onPointerLeave={() => {
+                  if (longPressTimer.current !== null) {
+                    window.clearTimeout(longPressTimer.current)
+                    longPressTimer.current = null
+                  }
+                }}
                 onClick={() => setActiveTool(tool.id as ToolId)}
                 className={`flex h-[48px] w-[48px] flex-col items-center justify-center rounded-lg text-sm transition-all ${
                   activeTool === tool.id
