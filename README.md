@@ -1,6 +1,6 @@
 # Marmoraria CAD
 
-Marmoraria CAD é uma aplicação web PWA para croquis técnicos de cozinhas, bancadas e superfícies em mármore/granito. O foco é desenho rápido em dispositivos touch e tablets com caneta, mas funciona também em desktop.
+Marmoraria CAD é uma aplicação web PWA para desenhos técnicos de cozinhas, banheiros, bancadas e superfícies em mármore/granito. O foco é desenho rápido em dispositivos touch e tablets com caneta, mas funciona também em desktop.
 
 ## O que o programa faz
 
@@ -77,24 +77,3 @@ npm run preview
 - `idb`
 - `jspdf`
 - `tailwindcss`
-
-## Publicação no GitHub
-
-1. Crie um repositório no GitHub.
-2. Adicione o projeto e commite o código.
-3. Inclua este `README.md` na raiz do repositório.
-4. Opcional: configure GitHub Pages na branch de publicação.
-
-## Contato
-
-Se quiser estender este projeto, adicione suporte a:
-
-- templates de cozinha e bancadas
-- edição avançada de vértices
-- salvamento em nuvem
-- preview de impressão
-- biblioteca de materiais
-
----
-
-`Marmoraria CAD` é ideal para quem precisa criar esquemas técnicos de mármores e cozinhas com rapidez e toque intuitivo.
