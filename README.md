@@ -1,6 +1,6 @@
-# Marmoraria CAD
+# Equilibrium CAD
 
-Marmoraria CAD é uma aplicação web PWA para desenhos técnicos de cozinhas, banheiros, bancadas e superfícies em mármore/granito. O foco é desenho rápido em dispositivos touch e tablets com caneta, mas funciona também em desktop.
+Equilibrium CAD é uma aplicação web PWA para desenhos técnicos de cozinhas, banheiros, bancadas e superfícies em mármore/granito. O foco é desenho rápido em dispositivos touch e tablets com caneta, mas funciona também em desktop.
 
 ## O que o programa faz
 
