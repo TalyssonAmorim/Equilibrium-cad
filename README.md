@@ -1,70 +1,100 @@
 # Marmoraria CAD
 
-PWA touch-first para croquis técnicos de cozinhas, bancadas e projetos em mármore/granito — otimizado para tablets Android com S Pen (ex.: Galaxy Tab S10 FE).
+Marmoraria CAD é uma aplicação web PWA para croquis técnicos de cozinhas, bancadas e superfícies em mármore/granito. O foco é desenho rápido em dispositivos touch e tablets com caneta, mas funciona também em desktop.
 
-## Stack
+## O que o programa faz
 
-- React + TypeScript
-- Tailwind CSS v4
-- React-Konva (canvas)
-- Zustand (estado)
-- IndexedDB via `idb` (persistência local)
-- jsPDF (exportação PDF)
+- Desenha **linhas, retângulos, círculos, textos e formas técnicas** em um canvas com escala métrica.
+- Cria **componentes de cozinha** (como cuba, tanque e fogão) com preview SVG e posicionamento no projeto.
+- Oferece **seleção, redimensionamento e movimentação** de objetos.
+- Suporta **grade de snap**, **pan**, **zoom** e **desfazer/refazer**.
+- Persiste o projeto localmente via **IndexedDB**.
+- Gera exportação para PDF e permite instalação como **PWA**.
 
-## Desenvolvimento
+## Principais recursos
+
+- Interface leve com React + TypeScript
+- Canvas vetorial usando **React-Konva**
+- Estado gerenciado com **Zustand**
+- Biblioteca de componentes e ferramentas de desenho
+- Suporte touch/pointer e caneta S Pen
+- Layout responsivo para uso em tablets e desktop
+
+## Como usar
+
+### Instalação
 
 ```bash
 npm install
+```
+
+### Desenvolvimento
+
+```bash
 npm run dev
 ```
 
-Abra no tablet ou emulador Chrome com modo dispositivo touch. Para instalar como PWA: menu do navegador → “Instalar app”.
+Abra o endereço exibido no terminal no navegador. Para melhor experiência em touch, use um tablet ou emulador de dispositivo no Chrome.
 
-## Build
+### Build para produção
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Arquitetura
+### Fluxo básico
 
-```
-src/
-  canvas/       # Stage, camadas, câmera virtual
-  tools/        # Ferramentas (select, pan, line, rect…)
-  store/        # Zustand (projeto + canvas)
-  components/   # UI (toolbar, sidebars, diálogos)
-  types/        # Entidades tipadas (shapes, project)
-  hooks/        # Pointer events, viewport, atalhos
-  utils/        # Câmera, grid snap, mm, DB, export
-```
+1. Selecione uma ferramenta na barra lateral ou no menu flutuante.
+2. Clique/arraste no canvas para desenhar.
+3. Use a ferramenta de seleção para mover ou redimensionar objetos.
+4. Abra o painel de componentes para inserir cuba, tanque ou fogão.
+5. Ao colocar um shape, o app volta automaticamente para a ferramenta de seleção.
 
-### Camadas Konva
+## Estrutura do projeto
 
-1. **GridLayer** — grade infinita 10/100 mm (viewport culling)
-2. **DrawingLayer** — linhas, retângulos, texto
-3. **MeasurementLayer** — cotas automáticas
-4. **UILayer** — preview de desenho e seleção
+- `src/canvas/` — Stage comentado, camadas e renderização Konva
+- `src/tools/` — Lógica das ferramentas de desenho e comportamento do pointer
+- `src/store/` — Zustand para estado do canvas, seleção e projeto
+- `src/components/` — UI e painéis de controle
+- `src/types/` — Definições de shapes, ferramentas e componentes
+- `src/hooks/` — Eventos de ponteiro, atalhos de teclado e responsividade
+- `src/utils/` — Funções de câmera, grade, exportação, persistência e geometria
 
-### Gestos
+## Comandos úteis
 
-| Gesto | Ação |
-|--------|------|
-| S Pen / mouse + ferramenta desenho | Linha, retângulo |
-| Círculo (C) | Centro + arraste para definir o raio |
-| Seleção + alças | Redimensiona retângulo, círculo ou linha selecionada |
-| Desfazer (↶ ou Ctrl+Z) | Volta última alteração |
-| 2 dedos | Pan + pinch zoom |
-| Ferramenta Pan | Arrastar com 1 dedo |
-| Snap | Grade 10 mm (toggle na toolbar) |
+- `npm run dev` — inicia o ambiente de desenvolvimento
+- `npm run build` — compila a aplicação para produção
+- `npm run preview` — executa a build gerada localmente
+- `npm run lint` — verifica o código com ESLint
 
-Coordenadas em **milímetros** no mundo; escala da câmera em px/mm.
+## Dependências principais
 
-## Próximos passos sugeridos
+- `react`, `react-dom`
+- `vite`
+- `react-konva`, `konva`
+- `zustand`
+- `idb`
+- `jspdf`
+- `tailwindcss`
 
-- Ferramentas texto e medida dedicadas
-- Edição de vértices / drag de shapes
-- Sincronização em nuvem
-- Templates de cozinha e biblioteca de materiais
-- PWA icons (`public/pwa-192.png`, `pwa-512.png`)
+## Publicação no GitHub
+
+1. Crie um repositório no GitHub.
+2. Adicione o projeto e commite o código.
+3. Inclua este `README.md` na raiz do repositório.
+4. Opcional: configure GitHub Pages na branch de publicação.
+
+## Contato
+
+Se quiser estender este projeto, adicione suporte a:
+
+- templates de cozinha e bancadas
+- edição avançada de vértices
+- salvamento em nuvem
+- preview de impressão
+- biblioteca de materiais
+
+---
+
+`Marmoraria CAD` é ideal para quem precisa criar esquemas técnicos de mármores e cozinhas com rapidez e toque intuitivo.
