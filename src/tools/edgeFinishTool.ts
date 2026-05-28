@@ -62,6 +62,7 @@ export const edgeFinishTool: ToolHandler = {
       .addShape(
         createEdgeFinishShape(x, y, width, height, draft.edgeType),
       )
+    useCanvasStore.getState().setActiveTool('select')
   },
   onCancel() {
     useCanvasStore.getState().setDraft(null)

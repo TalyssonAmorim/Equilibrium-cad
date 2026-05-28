@@ -64,6 +64,7 @@ export const componentTool: ToolHandler = {
     )
 
     useProjectStore.getState().addShape(shape)
+    useCanvasStore.getState().setActiveTool('select')
   },
 
   onCancel() {

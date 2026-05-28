@@ -411,10 +411,6 @@ export function createTextShape(x: number, y: number, text: string): Shape {
 }
 
 export function getComponentInitialSize(componentType: ComponentType) {
-  if (componentType.startsWith('cuba_') || componentType.startsWith('cooktop_')) {
-    return { width: 40, height: 40 }
-  }
-
   const definition = getComponentDefinition(componentType)
   return { width: definition.width, height: definition.height }
 }

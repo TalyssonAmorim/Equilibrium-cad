@@ -25,6 +25,7 @@ export const textTool: ToolHandler = {
     if (!value) return
 
     useProjectStore.getState().addShape(createTextShape(draft.x, draft.y, value))
+    useCanvasStore.getState().setActiveTool('select')
   },
 
   onCancel() {

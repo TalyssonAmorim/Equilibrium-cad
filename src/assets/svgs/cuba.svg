@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 250 175"
+    preserveAspectRatio="xMidYMid meet"
+    fill="none"
+>
+
+    <!-- CUBA EXTERNA -->
+    <rect
+        x="45"
+        y="35"
+        width="160"
+        height="105"
+        rx="22"
+        ry="22"
+        stroke="#111111"
+        stroke-width="3.5"
+    />
+
+    <!-- CUBA INTERNA -->
+    <rect
+        x="55"
+        y="45"
+        width="140"
+        height="85"
+        rx="18"
+        ry="18"
+        stroke="#111111"
+        stroke-width="2.5"
+    />
+
+    <!-- RALO EXTERNO -->
+    <circle
+        cx="125"
+        cy="68"
+        r="11"
+        stroke="#111111"
+        stroke-width="2.5"
+    />
+
+    <!-- RALO INTERNO -->
+    <circle
+        cx="125"
+        cy="68"
+        r="5"
+        stroke="#111111"
+        stroke-width="1.8"
+    />
+
+</svg>
