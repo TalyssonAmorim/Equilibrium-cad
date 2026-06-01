@@ -10,6 +10,7 @@ import { SELECTION_COLOR, DEFAULT_TEXT_FONT_SIZE, DEFAULT_TEXT_COLOR, DEFAULT_FO
 import { EdgeFinishNode } from './EdgeFinishNode'
 import { ComponentNode } from './ComponentNode'
 import { SideLabelsRenderer } from './SideLabelsRenderer'
+import { renderLineLabels } from './SideLabelRenderers'
 import { formatCm } from '../utils/geometry'
 import { createLShapePoints } from '../utils/shapes'
 
@@ -202,6 +203,7 @@ function ShapeNodeInner({ shape, selected }: ShapeNodeProps) {
             hitStrokeWidth={12}
           />
           {isLShapeLine && getLShapeMeasurementLabels(shape)}
+          {isLShapeLine && renderLineLabels(shape, { selected })}
         </Group>
       )
     }
@@ -219,11 +221,11 @@ function ShapeNodeInner({ shape, selected }: ShapeNodeProps) {
             perfectDrawEnabled={false}
           />
           {getRectMeasurementLabels(shape)}
-            <SideLabelsRenderer shape={shape} selected={selected} />
+          <SideLabelsRenderer shape={shape} selected={selected} />
         </Group>
       )
     case 'edgeFinish':
-      return <EdgeFinishNode shape={shape} highlight={highlight} />
+      return <EdgeFinishNode shape={shape} highlight={highlight} selected={selected} />
     case 'circle':
       return (
         <Circle

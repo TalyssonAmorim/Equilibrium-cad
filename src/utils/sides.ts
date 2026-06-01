@@ -22,7 +22,7 @@ export const SIDE_COLORS = {
   null: 'transparent',
 }
 
-export const SIDE_COLORS_LABELS: Record<SideColor, string> = {
+export const SIDE_COLORS_LABELS: Record<string, string> = {
   red: 'Vermelho',
   green: 'Verde',
   blue: 'Azul',
@@ -37,11 +37,16 @@ export function getSideCount(shape: Shape): number {
   switch (shape.type) {
     case 'rect':
     case 'component':
-      return 4 // retângulo: top, right, bottom, left
+    case 'edgeFinish':
+      return 4 // retângulo/componente/edge: top, right, bottom, left
     case 'circle':
       return 0 // círculo não tem lados discretos
-    case 'line':
-      // L-shape tem 6 lados, linha simples tem 0
+    case 'line': {
+      // L-shape tem 6 lados, polígono fechado com N pontos tem N arestas, linha simples tem 0
+      if (shape.closed && shape.points && shape.points.length >= 4) {
+        // Cada par de coordenadas (x, y) é um vértice, pontos.length/2 = número de vértices
+        return Math.max(3, shape.points.length / 2)
+      }
       if (
         shape.closed &&
         typeof shape.width1 === 'number' &&
@@ -52,9 +57,15 @@ export function getSideCount(shape: Shape): number {
         return 6
       }
       return 0
+    }
     default:
       return 0
   }
+}
+
+/** Verifica se shape suporta coloração de lados */
+export function canColorSides(shape: Shape): boolean {
+  return getSideCount(shape) > 0
 }
 
 /** Retorna labels dos lados */

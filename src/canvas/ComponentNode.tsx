@@ -3,13 +3,14 @@ import { useMemo } from 'react'
 import useImage from 'use-image'
 import type { ComponentShape } from '../types/shapes'
 import { getComponentDefinition } from '../types/components'
+import { renderComponentLabels } from './SideLabelRenderers'
 
 interface ComponentNodeProps {
   shape: ComponentShape
   selected: boolean
 }
 
-export function ComponentNode({ shape }: ComponentNodeProps) {
+export function ComponentNode({ shape, selected }: ComponentNodeProps) {
   const definition = getComponentDefinition(shape.componentType)
   const innerPadding = 8
   const innerWidth = Math.max(10, shape.width - innerPadding * 2)
@@ -36,8 +37,7 @@ export function ComponentNode({ shape }: ComponentNodeProps) {
           listening={false}
         />
       )}
-    
-
+      {renderComponentLabels(shape, { selected })}
     </Group>
   )
 }

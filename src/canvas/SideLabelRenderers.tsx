@@ -1,20 +1,16 @@
-import { Group, Path, Text, Line } from 'react-konva'
-import { DEFAULT_TEXT_FONT_SIZE, DEFAULT_TEXT_COLOR, DEFAULT_FONT_FAMILY } from '../utils/constants'
-import type { EdgeFinishShape } from '../types/shapes'
-import { getEdgeFinishDefinition } from '../types/edgeFinish'
-import { EDGE_FINISH_VIEWBOX } from '../types/edgeFinish'
-import { getSidesColors, SIDE_COLORS } from '../utils/sides'
+import { Line, Text, Group } from 'react-konva'
+import type { RectShape, LineShape, ComponentShape, EdgeFinishShape } from '../types/shapes'
+import { getSidesColors, SIDE_COLORS, type SideLabel } from '../utils/sides'
+import { DEFAULT_TEXT_FONT_SIZE, DEFAULT_FONT_FAMILY } from '../utils/constants'
 
-interface EdgeFinishNodeProps {
-  shape: EdgeFinishShape
-  highlight?: string
+interface RenderLabelProps {
   selected?: boolean
 }
 
-export function EdgeFinishNode({ shape, highlight }: EdgeFinishNodeProps) {
-  const def = getEdgeFinishDefinition(shape.edgeType)
-  const scaleX = shape.width / EDGE_FINISH_VIEWBOX.width
-  const scaleY = shape.height / EDGE_FINISH_VIEWBOX.height
+const SIDE_LABELS = ['A', 'B', 'C', 'D', 'E', 'F']
+
+export function renderRectLabels(shape: RectShape, props?: RenderLabelProps) {
+  void props
   const sidesColors = getSidesColors(shape)
   const padding = 8
   const lineWidth = 4
@@ -37,49 +33,6 @@ export function EdgeFinishNode({ shape, highlight }: EdgeFinishNodeProps) {
 
   return (
     <Group>
-      <Group x={shape.x} y={shape.y}>
-        <Path
-          data={def.path}
-          scaleX={scaleX}
-          scaleY={scaleY}
-          fill={shape.fill}
-          stroke={highlight ?? shape.stroke}
-          strokeWidth={(shape.strokeWidth / Math.min(scaleX, scaleY)) * 0.5}
-          lineJoin="round"
-          perfectDrawEnabled={false}
-        />
-        <Text
-          x={0}
-          y={shape.height + 4}
-          width={shape.width}
-          text={def.shortLabel}
-          fontSize={DEFAULT_TEXT_FONT_SIZE}
-          fill={highlight ?? DEFAULT_TEXT_COLOR}
-          fontFamily={DEFAULT_FONT_FAMILY}
-          align="center"
-          listening={false}
-        />
-        {(() => {
-          const range = Math.max(0, Math.min(1, shape.range ?? 0))
-          const cm = Math.round(1 + range * 49)
-
-          return (
-            <Text
-              x={0}
-              y={shape.height + 4 + DEFAULT_TEXT_FONT_SIZE + 6}
-              width={shape.width}
-              text={`${cm} cm`}
-              fontSize={DEFAULT_TEXT_FONT_SIZE}
-              fill={highlight ?? DEFAULT_TEXT_COLOR}
-              fontFamily={DEFAULT_FONT_FAMILY}
-              align="center"
-              listening={false}
-            />
-          )
-        })()}
-      </Group>
-
-      {/* Side color indicators */}
       {/* Top side - A */}
       {topColor !== 'transparent' && (
         <>
@@ -168,5 +121,88 @@ export function EdgeFinishNode({ shape, highlight }: EdgeFinishNodeProps) {
         </>
       )}
     </Group>
+  )
+}
+
+export function renderLineLabels(shape: LineShape, props?: RenderLabelProps) {
+  void props
+  const sidesColors = getSidesColors(shape)
+  const points = shape.points ?? [shape.x1, shape.y1, shape.x2, shape.y2]
+  
+  if (points.length < 4) return null
+
+  const numSides = Math.max(3, points.length / 2)
+  const padding = 8
+  const lineWidth = 4
+
+  return (
+    <Group>
+      {Array.from({ length: numSides }).map((_, i) => {
+        const label = SIDE_LABELS[i] as SideLabel
+        const color = sidesColors[label] || null
+        const hexColor = SIDE_COLORS[color ?? 'null']
+
+        if (hexColor === 'transparent') return null
+
+        // Conectar vértice i ao vértice i+1
+        const x1 = points[i * 2]
+        const y1 = points[i * 2 + 1]
+        const x2 = points[((i + 1) % numSides) * 2]
+        const y2 = points[((i + 1) % numSides) * 2 + 1]
+
+        // Ponto médio e perpendicular
+        const midX = (x1 + x2) / 2
+        const midY = (y1 + y2) / 2
+        const dx = x2 - x1
+        const dy = y2 - y1
+        const len = Math.hypot(dx, dy) || 1
+        const normX = dy / len
+        const normY = -dx / len
+
+        const labelX = midX + normX * (padding + lineWidth)
+        const labelY = midY + normY * (padding + lineWidth)
+
+        return (
+          <Group key={`line-label-${i}`}>
+            <Line
+              points={[x1, y1, x2, y2]}
+              stroke={hexColor}
+              strokeWidth={lineWidth}
+              listening={false}
+            />
+            <Text
+              x={labelX - 6}
+              y={labelY - 8}
+              text={label}
+              fontSize={DEFAULT_TEXT_FONT_SIZE + 2}
+              fontStyle="bold"
+              fill={hexColor}
+              fontFamily={DEFAULT_FONT_FAMILY}
+              listening={false}
+            />
+          </Group>
+        )
+      })}
+    </Group>
+  )
+}
+
+export function renderComponentLabels(shape: ComponentShape, props?: RenderLabelProps) {
+  void props
+  return renderRectLabels(
+    {
+      ...shape,
+      type: 'rect',
+    } as any,
+  )
+}
+
+export function renderEdgeFinishLabels(shape: EdgeFinishShape, props?: RenderLabelProps) {
+  void props
+  return renderRectLabels(
+    {
+      ...shape,
+      type: 'rect',
+    } as any,
   )
 }

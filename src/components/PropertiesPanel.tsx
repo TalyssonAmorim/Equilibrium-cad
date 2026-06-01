@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from 'react'
+import { useMemo, useState, useEffect, type ReactNode } from 'react'
 import { useCanvasStore } from '../store/canvasStore'
 import { useProjectStore } from '../store/projectStore'
 import { selectProjectShapes } from '../store/selectors'
@@ -14,7 +14,16 @@ import {
 } from '../types/shapes'
 import { getEdgeFinishDefinition } from '../types/edgeFinish'
 import { ProjectFieldsPanel } from './ProjectFieldsPanel'
-import { getSideCount, getSideLabels, getSidesColors, updateSideColor, SIDE_COLORS_LABELS, type SideColor } from '../utils/sides'
+import {
+  getSideCount,
+  getSideLabels,
+  getSidesColors,
+  updateSideColor,
+  SIDE_COLORS_LABELS,
+  SIDE_COLORS,
+  type SideColor,
+  type SideLabel,
+} from '../utils/sides'
 
 function isLShapeLine(shape: Shape): shape is LineShape & {
   closed: true
@@ -65,6 +74,14 @@ export function PropertiesPanel() {
   )
 
   const shape = selected.length === 1 ? selected[0] : null
+  const sideCount = shape ? getSideCount(shape) : 0
+  const sideLabels = shape ? getSideLabels(sideCount) : []
+  const sidesColors = shape ? getSidesColors(shape) : ({} as Record<SideLabel, SideColor>)
+  const [selectedSide, setSelectedSide] = useState<SideLabel | null>(null)
+
+  useEffect(() => {
+    setSelectedSide(sideLabels[0] ?? null)
+  }, [shape?.id, sideCount])
 
   return (
     <aside className="flex w-[280px] shrink-0 flex-col border-l border-surface-border bg-surface-elevated">
@@ -218,6 +235,79 @@ export function PropertiesPanel() {
               />
             </label>
           </ShapeEditor>
+        )}
+
+        {shape && sideCount > 0 && selectedSide && (
+          <section className="mb-4 rounded-lg border border-surface-border bg-surface p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">
+              Cor por lado
+            </p>
+            <p className="mt-2 text-xs text-text-muted">
+              Selecione um lado e escolha a cor.
+            </p>
+
+            <div className="mt-3 grid grid-cols-4 gap-2">
+              {sideLabels.map((label) => {
+                const isActive = label === selectedSide
+                const color = sidesColors[label]
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => setSelectedSide(label)}
+                    className={`rounded border px-3 py-2 text-left text-sm transition ${
+                      isActive
+                        ? 'border-text bg-surface-border'
+                        : 'border-surface-border bg-surface'
+                    }`}
+                  >
+                    <div className="font-medium">Lado {label}</div>
+                    <div className="mt-1 text-[10px] text-text-muted">
+                      {SIDE_COLORS_LABELS[color ?? 'null']}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="mt-3">
+              <div className="mb-2 flex items-center justify-between text-xs text-text-muted">
+                <span>Lado selecionado</span>
+                <span>{selectedSide}</span>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {(
+                  [null, 'red', 'green', 'blue', 'yellow', 'orange', 'purple'] as SideColor[]
+                ).map((color) => {
+                  const colorLabel = SIDE_COLORS_LABELS[color ?? 'null']
+                  return (
+                    <button
+                      key={color}
+                      type="button"
+                      onClick={() =>
+                        updateShape(shape.id, {
+                          metadata: {
+                            ...shape.metadata,
+                            sidesConfig: updateSideColor(shape, selectedSide, color),
+                          },
+                        })
+                      }
+                      className="group rounded-lg border border-surface-border p-3 text-[10px] text-left transition hover:border-text"
+                    >
+                      <div
+                        className="mb-2 h-6 w-full rounded"
+                        style={{
+                          backgroundColor: SIDE_COLORS[color ?? 'null'],
+                          border: color === null ? '1px solid rgba(148, 163, 184, 0.5)' : undefined,
+                        }}
+                      />
+                      <div className="font-semibold">{colorLabel}</div>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
         )}
 
         {shape && isEdgeFinishShape(shape) && (

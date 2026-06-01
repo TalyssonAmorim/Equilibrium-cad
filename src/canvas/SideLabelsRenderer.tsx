@@ -1,6 +1,6 @@
 import { Line, Text, Group } from 'react-konva'
 import type { RectShape } from '../types/shapes'
-import { getSideLabels, getSidesColors, SIDE_COLORS } from '../utils/sides'
+import { getSidesColors, SIDE_COLORS } from '../utils/sides'
 import { DEFAULT_TEXT_FONT_SIZE, DEFAULT_FONT_FAMILY } from '../utils/constants'
 
 interface SideLabelsRendererProps {
@@ -9,8 +9,8 @@ interface SideLabelsRendererProps {
 }
 
 export function SideLabelsRenderer({ shape, selected }: SideLabelsRendererProps) {
+  void selected
   const sidesColors = getSidesColors(shape)
-  const sideLabels = getSideLabels(4) // rect tem 4 lados
 
   const padding = 8
   const lineWidth = 4
