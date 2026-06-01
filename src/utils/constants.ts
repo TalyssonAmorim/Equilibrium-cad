@@ -14,15 +14,17 @@ export const CANVAS_BACKGROUND = '#ffffff'
 export const DEFAULT_STROKE = '#334155'
 export const DEFAULT_STROKE_WIDTH = 1.25
 export const DEFAULT_FILL = 'rgba(51, 65, 85, 0.12)'
-export const DEFAULT_TEXT_FONT_SIZE = 18
+export const DEFAULT_TEXT_FONT_SIZE = 10
 
+export const DEFAULT_TEXT_COLOR = '#334155'
+export const DEFAULT_FONT_FAMILY = 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial'
 export const SELECTION_COLOR = '#d97706'
 export const GRID_MINOR_COLOR = 'rgba(71, 85, 105, 0.22)'
 export const GRID_MAJOR_COLOR = 'rgba(51, 65, 85, 0.42)'
 
 /** Tamanho padrão ao inserir acabamento (cm) */
-export const DEFAULT_EDGE_FINISH_WIDTH_CM = 8
-export const DEFAULT_EDGE_FINISH_HEIGHT_CM = 5
+export const DEFAULT_EDGE_FINISH_WIDTH_CM = 30
+export const DEFAULT_EDGE_FINISH_HEIGHT_CM = 30
 
 export const SIDEBAR_WIDTH = 72
 export const PROPERTIES_WIDTH = 280

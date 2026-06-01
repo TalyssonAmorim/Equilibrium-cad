@@ -10,12 +10,15 @@ import type {
   MeasurementShape,
   RectShape,
   Shape,
+  TextShape,
 } from '../types/shapes'
 import {
   DEFAULT_FILL,
   DEFAULT_STROKE,
   DEFAULT_STROKE_WIDTH,
   DEFAULT_TEXT_FONT_SIZE,
+  DEFAULT_TEXT_COLOR,
+  DEFAULT_FONT_FAMILY,
 } from './constants'
 import { distanceCm, generateId } from './geometry'
 import { getComponentDefinition } from '../types/components'
@@ -312,6 +315,7 @@ export function createEdgeFinishShape(
   width: number,
   height: number,
   edgeType: EdgeFinishType,
+  range?: number,
 ): EdgeFinishShape {
   const def = getEdgeFinishDefinition(edgeType)
   return {
@@ -323,6 +327,7 @@ export function createEdgeFinishShape(
     width,
     height,
     edgeType,
+    range: range ?? 1,
     strokeWidth: DEFAULT_STROKE_WIDTH,
     stroke: DEFAULT_STROKE,
     fill: DEFAULT_FILL,
@@ -396,7 +401,7 @@ export function createMeasurementForLine(line: LineShape): MeasurementShape {
   }
 }
 
-export function createTextShape(x: number, y: number, text: string): Shape {
+export function createTextShape(x: number, y: number, text: string): TextShape {
   return {
     id: generateId(),
     type: 'text',
@@ -405,7 +410,8 @@ export function createTextShape(x: number, y: number, text: string): Shape {
     y,
     text,
     fontSize: DEFAULT_TEXT_FONT_SIZE,
-    fill: DEFAULT_STROKE,
+    fill: DEFAULT_TEXT_COLOR,
+    fontFamily: DEFAULT_FONT_FAMILY,
     metadata: { createdAt: new Date().toISOString() },
   }
 }

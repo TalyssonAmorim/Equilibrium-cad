@@ -57,10 +57,11 @@ export const edgeFinishTool: ToolHandler = {
 
     if (width < 0.5 || height < 0.5) return
 
+    const range = useCanvasStore.getState().selectedEdgeFinishRange
     useProjectStore
       .getState()
       .addShape(
-        createEdgeFinishShape(x, y, width, height, draft.edgeType),
+        createEdgeFinishShape(x, y, width, height, draft.edgeType, range),
       )
     useCanvasStore.getState().setActiveTool('select')
   },

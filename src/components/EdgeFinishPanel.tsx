@@ -9,6 +9,8 @@ export function EdgeFinishPanel() {
   const setSelected = useCanvasStore((s) => s.setSelectedEdgeFinish)
   const setShapesPanelOpen = useCanvasStore((s) => s.setShapesPanelOpen)
   const setActiveTool = useCanvasStore((s) => s.setActiveTool)
+  const range = useCanvasStore((s) => s.selectedEdgeFinishRange)
+  const setRange = useCanvasStore((s) => s.setSelectedEdgeFinishRange)
 
   return (
     <aside className="fixed left-4 top-20 z-30 flex w-72 flex-col rounded-2xl border border-surface-border bg-surface-elevated shadow-xl">
@@ -73,6 +75,39 @@ export function EdgeFinishPanel() {
           {EDGE_FINISH_CATALOG.find((c) => c.id === selected)?.label}
         </strong>
       </p>
+      <div className="border-t border-surface-border px-4 py-3">
+        <label className="text-[10px] text-text-muted">Range (cm)</label>
+        <div className="mt-2 flex items-center gap-2">
+          <input
+            type="range"
+            min={1}
+            max={50}
+            value={Math.round(1 + (range ?? 1) * 49)}
+            onChange={(e) => {
+              const cm = Number(e.target.value)
+              const normalized = Math.min(1, Math.max(0, (cm - 1) / 49))
+              setRange(normalized)
+            }}
+            className="w-full"
+          />
+          <div className="w-14 text-right text-sm">{Math.round(1 + (range ?? 1) * 49)}cm</div>
+        </div>
+        <div className="mt-3 flex items-center gap-2">
+          <input
+            type="number"
+            min={1}
+            max={50}
+            value={Math.round(1 + (range ?? 1) * 49)}
+            onChange={(e) => {
+              const cm = Number(e.target.value)
+              const normalized = Math.min(1, Math.max(0, (cm - 1) / 49))
+              setRange(normalized)
+            }}
+            className="w-20 rounded-md border border-surface-border bg-surface px-2 py-1 text-sm text-text"
+          />
+          <span className="text-sm text-text-muted">cm</span>
+        </div>
+      </div>
     </aside>
   )
 }

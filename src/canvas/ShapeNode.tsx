@@ -6,9 +6,10 @@ import type {
   RectShape,
   Shape,
 } from '../types/shapes'
-import { SELECTION_COLOR } from '../utils/constants'
+import { SELECTION_COLOR, DEFAULT_TEXT_FONT_SIZE, DEFAULT_TEXT_COLOR, DEFAULT_FONT_FAMILY } from '../utils/constants'
 import { EdgeFinishNode } from './EdgeFinishNode'
 import { ComponentNode } from './ComponentNode'
+import { SideLabelsRenderer } from './SideLabelsRenderer'
 import { formatCm } from '../utils/geometry'
 import { createLShapePoints } from '../utils/shapes'
 
@@ -93,8 +94,9 @@ function getLShapeMeasurementLabels(shape: Extract<Shape, { type: 'line' }>) {
         y={outerWidthY}
         width={90}
         text={width1Text}
-        fontSize={10}
-        fill="#94a3b8"
+        fontSize={DEFAULT_TEXT_FONT_SIZE}
+        fill={DEFAULT_TEXT_COLOR}
+        fontFamily={DEFAULT_FONT_FAMILY}
         align="center"
         listening={false}
       />
@@ -103,8 +105,9 @@ function getLShapeMeasurementLabels(shape: Extract<Shape, { type: 'line' }>) {
         y={innerWidthY}
         width={90}
         text={width2Text}
-        fontSize={10}
-        fill="#94a3b8"
+        fontSize={DEFAULT_TEXT_FONT_SIZE}
+        fill={DEFAULT_TEXT_COLOR}
+        fontFamily={DEFAULT_FONT_FAMILY}
         align="center"
         listening={false}
       />
@@ -113,8 +116,9 @@ function getLShapeMeasurementLabels(shape: Extract<Shape, { type: 'line' }>) {
         y={outerHeightY}
         width={90}
         text={height1Text}
-        fontSize={10}
-        fill="#94a3b8"
+        fontSize={DEFAULT_TEXT_FONT_SIZE}
+        fill={DEFAULT_TEXT_COLOR}
+        fontFamily={DEFAULT_FONT_FAMILY}
         align={outerHeightAlign}
         listening={false}
       />
@@ -123,8 +127,9 @@ function getLShapeMeasurementLabels(shape: Extract<Shape, { type: 'line' }>) {
         y={innerHeightY}
         width={90}
         text={height2Text}
-        fontSize={10}
-        fill="#94a3b8"
+        fontSize={DEFAULT_TEXT_FONT_SIZE}
+        fill={DEFAULT_TEXT_COLOR}
+        fontFamily={DEFAULT_FONT_FAMILY}
         align={innerHeightAlign}
         listening={false}
       />
@@ -145,8 +150,9 @@ function getRectMeasurementLabels(shape: RectShape) {
         y={shape.y - 18}
         width={100}
         text={widthText}
-        fontSize={10}
-        fill="#94a3b8"
+        fontSize={DEFAULT_TEXT_FONT_SIZE}
+        fill={DEFAULT_TEXT_COLOR}
+        fontFamily={DEFAULT_FONT_FAMILY}
         align="center"
         listening={false}
       />
@@ -155,8 +161,9 @@ function getRectMeasurementLabels(shape: RectShape) {
         y={midY - 6}
         width={60}
         text={heightText}
-        fontSize={10}
-        fill="#94a3b8"
+        fontSize={DEFAULT_TEXT_FONT_SIZE}
+        fill={DEFAULT_TEXT_COLOR}
+        fontFamily={DEFAULT_FONT_FAMILY}
         align="left"
         listening={false}
       />
@@ -212,6 +219,7 @@ function ShapeNodeInner({ shape, selected }: ShapeNodeProps) {
             perfectDrawEnabled={false}
           />
           {getRectMeasurementLabels(shape)}
+            <SideLabelsRenderer shape={shape} selected={selected} />
         </Group>
       )
     case 'edgeFinish':
@@ -238,6 +246,7 @@ function ShapeNodeInner({ shape, selected }: ShapeNodeProps) {
           text={shape.text}
           fontSize={shape.fontSize}
           fill={highlight ?? shape.fill}
+          fontFamily={shape.fontFamily ?? DEFAULT_FONT_FAMILY}
         />
       )
     case 'measurement': {
@@ -266,8 +275,9 @@ function ShapeNodeInner({ shape, selected }: ShapeNodeProps) {
             offsetX={40}
             offsetY={6}
             text={shape.label}
-            fontSize={10}
-            fill="#fbbf24"
+            fontSize={DEFAULT_TEXT_FONT_SIZE}
+            fill={DEFAULT_TEXT_COLOR}
+            fontFamily={DEFAULT_FONT_FAMILY}
             align="center"
             listening={false}
           />

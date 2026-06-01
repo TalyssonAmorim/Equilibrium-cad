@@ -79,6 +79,7 @@ export interface EdgeFinishShape extends BaseShape {
   strokeWidth: number
   stroke: string
   fill: string
+  range?: number
 }
 
 export interface TextShape extends BaseShape {
@@ -88,6 +89,7 @@ export interface TextShape extends BaseShape {
   text: string
   fontSize: number
   fill: string
+  fontFamily?: string
 }
 
 export type ComponentOrientation =

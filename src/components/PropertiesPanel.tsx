@@ -14,6 +14,7 @@ import {
 } from '../types/shapes'
 import { getEdgeFinishDefinition } from '../types/edgeFinish'
 import { ProjectFieldsPanel } from './ProjectFieldsPanel'
+import { getSideCount, getSideLabels, getSidesColors, updateSideColor, SIDE_COLORS_LABELS, type SideColor } from '../utils/sides'
 
 function isLShapeLine(shape: Shape): shape is LineShape & {
   closed: true
@@ -234,6 +235,23 @@ export function PropertiesPanel() {
               label="Posição"
               value={`${Math.round(shape.x)} cm, ${Math.round(shape.y)} cm`}
             />
+            <div className="mt-4 space-y-2">
+              <label className="block text-xs text-text-muted">
+                Medida: {Math.round(1 + (shape.range ?? 0) * 49)} cm
+              </label>
+              <input
+                type="range"
+                min={1}
+                max={50}
+                value={Math.round(1 + (shape.range ?? 0) * 49)}
+                onChange={(e) => {
+                  const cm = Number(e.target.value)
+                  const normalized = Math.min(1, Math.max(0, (cm - 1) / 49))
+                  updateShape(shape.id, { range: normalized })
+                }}
+                className="w-full cursor-pointer"
+              />
+            </div>
           </ShapeEditor>
         )}
 

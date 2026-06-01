@@ -1,8 +1,7 @@
-import { Group, Image as KonvaImage, Rect, Text } from 'react-konva'
+import { Group, Image as KonvaImage } from 'react-konva'
 import { useMemo } from 'react'
 import useImage from 'use-image'
 import type { ComponentShape } from '../types/shapes'
-import { SELECTION_COLOR } from '../utils/constants'
 import { getComponentDefinition } from '../types/components'
 
 interface ComponentNodeProps {
@@ -10,13 +9,8 @@ interface ComponentNodeProps {
   selected: boolean
 }
 
-export function ComponentNode({ shape, selected }: ComponentNodeProps) {
+export function ComponentNode({ shape }: ComponentNodeProps) {
   const definition = getComponentDefinition(shape.componentType)
-  const highlight = selected ? SELECTION_COLOR : undefined
-  const fill = shape.fill ?? definition.fillColor
-  const stroke = highlight ?? shape.stroke ?? definition.strokeColor
-  const label = definition.shortLabel || definition.label
-  const fontSize = Math.min(20, Math.max(10, shape.height * 0.14))
   const innerPadding = 8
   const innerWidth = Math.max(10, shape.width - innerPadding * 2)
   const innerHeight = Math.max(10, shape.height - innerPadding * 2)

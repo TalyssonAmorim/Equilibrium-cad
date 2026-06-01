@@ -2,6 +2,7 @@ import Konva from 'konva'
 import { getEdgeFinishDefinition } from '../types/edgeFinish'
 import { EDGE_FINISH_VIEWBOX } from '../types/edgeFinish'
 import type { Shape } from '../types/shapes'
+import { DEFAULT_FONT_FAMILY } from './constants'
 import { getShapeBounds } from './shapes'
 
 const EXPORT_PX = 720
@@ -54,6 +55,7 @@ function addShapeToGroup(group: Konva.Group, shape: Shape) {
           text: shape.text,
           fontSize: shape.fontSize,
           fill: shape.fill,
+          fontFamily: (shape as any).fontFamily ?? DEFAULT_FONT_FAMILY,
         }),
       )
       break
@@ -67,7 +69,7 @@ function addShapeToGroup(group: Konva.Group, shape: Shape) {
           scaleY: shape.height / EDGE_FINISH_VIEWBOX.height,
           fill: shape.fill,
           stroke: shape.stroke,
-          strokeWidth: shape.strokeWidth,
+          strokeWidth: (shape.strokeWidth / Math.min(shape.width / EDGE_FINISH_VIEWBOX.width, shape.height / EDGE_FINISH_VIEWBOX.height)) * 0.5,
         }),
       )
       group.add(g)

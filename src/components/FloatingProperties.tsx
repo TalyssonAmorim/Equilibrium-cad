@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useCanvasStore } from '../store/canvasStore'
 import { useProjectStore } from '../store/projectStore'
 import { selectProjectShapes } from '../store/selectors'
+import { isEdgeFinishShape } from '../types/shapes'
 
 export function FloatingProperties() {
   const selectedIds = useCanvasStore((s) => s.selectedIds)
@@ -26,7 +27,7 @@ export function FloatingProperties() {
       ? shape
       : null
   const dimensionShape =
-    shape && 'width' in shape && 'height' in shape ? shape : null
+    shape && 'width' in shape && 'height' in shape && !isEdgeFinishShape(shape) ? shape : null
   const width = dimensionShape?.width
   const height = dimensionShape?.height
   const material = (shape?.metadata.material as string) ?? ''
@@ -172,6 +173,31 @@ export function FloatingProperties() {
           <p className="text-sm text-text-muted">
             Este objeto não possui campos editáveis de altura, largura e material.
           </p>
+        )}
+
+        {shape && isEdgeFinishShape(shape) && (
+          <div className="space-y-3">
+            <label className="block text-xs text-text-muted">
+              Medida: {Math.round(1 + (shape.range ?? 0) * 49)} cm
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  type="range"
+                  min={1}
+                  max={50}
+                  value={Math.round(1 + (shape.range ?? 0) * 49)}
+                  onChange={(e) => {
+                    const cm = Number(e.target.value)
+                    const normalized = Math.min(1, Math.max(0, (cm - 1) / 49))
+                    updateShape(shape.id, { range: normalized })
+                  }}
+                  className="w-full cursor-pointer flex-1"
+                />
+                <span className="text-xs text-text-muted w-10 text-right">
+                  {Math.round(1 + (shape.range ?? 0) * 49)}cm
+                </span>
+              </div>
+            </label>
+          </div>
         )}
       </div>
     </aside>

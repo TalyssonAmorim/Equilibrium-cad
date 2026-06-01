@@ -70,6 +70,7 @@ interface CanvasState {
   snapEnabled: boolean
   draft: DraftState | null
   rodaBancaHeightCm: number
+  selectedEdgeFinishRange: number
   selectedEdgeFinish: EdgeFinishType
   selectedComponent: ComponentType | null
   shapesPanelOpen: boolean
@@ -90,6 +91,7 @@ interface CanvasState {
   clearSelection: () => void
   setSnapEnabled: (enabled: boolean) => void
   setRodaBancaHeight: (height: number) => void
+  setSelectedEdgeFinishRange: (range: number) => void
   setDraft: (draft: DraftState | null) => void
   setSelectedEdgeFinish: (type: EdgeFinishType) => void
   setSelectedComponent: (type: ComponentType | null) => void
@@ -110,6 +112,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   snapEnabled: true,
   draft: null,
   rodaBancaHeightCm: 10,
+  selectedEdgeFinishRange: 1,
   selectedEdgeFinish: 'reto',
   selectedComponent: null,
   shapesPanelOpen: false,
@@ -175,6 +178,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   clearSelection: () => set({ selectedIds: [] }),
   setSnapEnabled: (snapEnabled) => set({ snapEnabled }),
   setRodaBancaHeight: (rodaBancaHeightCm) => set({ rodaBancaHeightCm }),
+  setSelectedEdgeFinishRange: (range: number) => set({ selectedEdgeFinishRange: range }),
   setDraft: (draft) => set({ draft }),
   setSelectedEdgeFinish: (selectedEdgeFinish) => set({ selectedEdgeFinish }),
   setSelectedComponent: (selectedComponent) => set({ selectedComponent }),
