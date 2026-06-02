@@ -24,6 +24,8 @@ export interface Project {
   phone?: string
   conditions: SiteConditions
   shapes: Shape[]
+  // Optional Excalidraw scene data (elements + appState)
+  excalidraw?: any
   createdAt: string
   updatedAt: string
 }

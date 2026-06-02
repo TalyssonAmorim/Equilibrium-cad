@@ -43,6 +43,8 @@ export interface ProjectState {
   captureUndoSnapshot: () => void
   removeShapes: (ids: string[]) => void
   setShapes: (shapes: Shape[]) => void
+  // Persist Excalidraw scene into the project
+  setExcalidrawScene: (scene: any) => void
   saveCurrentProject: () => Promise<void>
   markClean: () => void
   undo: () => void
@@ -199,6 +201,12 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       project: { ...project, shapes, updatedAt: new Date().toISOString() },
       isDirty: true,
     })
+  },
+
+  setExcalidrawScene: (scene) => {
+    const { project } = get()
+    if (!project) return
+    set({ project: { ...project, excalidraw: scene, updatedAt: new Date().toISOString() }, isDirty: true })
   },
 
   saveCurrentProject: async () => {

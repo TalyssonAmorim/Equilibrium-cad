@@ -8,9 +8,10 @@ import {
 interface ToolbarProps {
   onNewProject: () => void
   onOpenProjects: () => void
+  onToggleExcalidraw?: () => void
 }
 
-export function Toolbar({ onNewProject, onOpenProjects }: ToolbarProps) {
+export function Toolbar({ onNewProject, onOpenProjects, onToggleExcalidraw }: ToolbarProps) {
   const project = useProjectStore((s) => s.project)
   const isDirty = useProjectStore((s) => s.isDirty)
   const isSaving = useProjectStore((s) => s.isSaving)
@@ -43,6 +44,14 @@ export function Toolbar({ onNewProject, onOpenProjects }: ToolbarProps) {
         className="min-h-11 min-w-11 rounded-lg px-3 text-sm text-text-muted active:bg-surface-border"
       >
         Projetos
+      </button>
+
+      <button
+        type="button"
+        onClick={() => onToggleExcalidraw && onToggleExcalidraw()}
+        className="min-h-11 min-w-11 rounded-lg px-3 text-sm text-text-muted active:bg-surface-border"
+      >
+        Excalidraw
       </button>
 
       <div className="mx-2 h-6 w-px bg-surface-border" />

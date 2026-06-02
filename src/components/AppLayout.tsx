@@ -9,12 +9,14 @@ import { FloatingProperties } from './FloatingProperties'
 import { ProjectDialog } from './ProjectDialog'
 import { EdgeFinishPanel } from './EdgeFinishPanel'
 import { ComponentsPanel } from './ComponentsPanel'
+import { ExcalidrawPanel } from './ExcalidrawPanel'
 import { useCanvasStore } from '../store/canvasStore'
 
 export function AppLayout() {
   const canvasRef = useRef<HTMLDivElement>(null)
   const { width, height } = useViewportSize(canvasRef)
   const [dialog, setDialog] = useState<'new' | 'open' | null>(null)
+  const [showExcalidraw, setShowExcalidraw] = useState(false)
   const shapesPanelOpen = useCanvasStore((s) => s.shapesPanelOpen)
   const selectedIds = useCanvasStore((s) => s.selectedIds)
   const toolboxOpen = useCanvasStore((s) => s.toolboxOpen)
@@ -27,6 +29,7 @@ export function AppLayout() {
       <Toolbar
         onNewProject={() => setDialog('new')}
         onOpenProjects={() => setDialog('open')}
+        onToggleExcalidraw={() => setShowExcalidraw((s) => !s)}
       />
 
       {/* FloatingToolbar com Undo/Redo */}
@@ -79,6 +82,10 @@ export function AppLayout() {
 
         {/* Painel de propriedades flutuante */}
         {selectedIds.length > 0 && <FloatingProperties />}
+        {showExcalidraw && (
+          // Lazy loaded panel
+          <ExcalidrawPanel onClose={() => setShowExcalidraw(false)} />
+        )}
       </div>
 
       {/* Dialogs */}
